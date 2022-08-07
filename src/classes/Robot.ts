@@ -29,7 +29,7 @@ export class Robot {
 
         this.f -= 1;
     }
-    
+
     right(): void {
         if (this.f === Facing.__LENGTH - 1) {
             this.f = 0
@@ -39,6 +39,6 @@ export class Robot {
         this.f += 1;
     }
 
-    move() {  }
-    report() {  }
+    move() { }
+    report() { }
 }

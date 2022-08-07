@@ -1,4 +1,4 @@
-import { Robot, Facing } from "./src/Robot";
+import { Robot, Facing } from "./classes/Robot";
 
 let robot = Robot.place(0, 0, Facing.North);
 
