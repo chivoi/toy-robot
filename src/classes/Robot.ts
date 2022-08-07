@@ -1,3 +1,5 @@
+import { isOnTheBoard } from "../utils/robotUtils";
+
 export enum Facing {
     North,
     East,
@@ -12,6 +14,12 @@ export class Robot {
     f: Facing;
 
     static place(x: number, y: number, f: Facing) {
+        if (!Object.values(Facing).includes(f)) {
+            throw new Error("invalid facing")
+        }
+        if (!isOnTheBoard(x) || !isOnTheBoard(y)) {
+            throw new Error(`invalid ${!isOnTheBoard(x) ? 'x' : 'y'}`)
+        }
         return new Robot(x, y, f)
     }
 
