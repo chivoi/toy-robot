@@ -1,8 +1,9 @@
 export enum Facing {
-    North = 1,
-    East = 2,
-    South = 3,
-    West = 4,
+    North,
+    East,
+    South,
+    West,
+    __LENGTH
 }
 
 export class Robot {
@@ -10,6 +11,9 @@ export class Robot {
     y: number;
     f: Facing;
 
+    static place(x: number, y: number, f: Facing) {
+        return new Robot(x, y, f)
+    }
 
     constructor(x: number, y: number, f: Facing) {
         this.x = x;
@@ -17,22 +21,24 @@ export class Robot {
         this.f = f;
     }
 
-    public left(): void {
-        if (this.f === Facing.North) {
-            this.f = Facing.West;
-            return;
+    left(): void {
+        if (this.f === 0) {
+            this.f = Facing.__LENGTH - 1
+            return
         }
+
         this.f -= 1;
-        return;
+    }
+    
+    right(): void {
+        if (this.f === Facing.__LENGTH - 1) {
+            this.f = 0
+            return
+        }
+
+        this.f += 1;
     }
 
-
-    // public right() { }
-    // public move() { }
-    // public report() { }
+    move() {  }
+    report() {  }
 }
-
-// let f:Facing = Facing.North;
-// let n:Facing = f+1
-
-// console.log(Facing[n])
