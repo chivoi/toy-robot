@@ -1,4 +1,4 @@
-import { isOnTheBoard } from "../utils/robotUtils";
+import { facingDirection, isOnTheBoard } from "../utils/robotUtils";
 
 export enum Facing {
     North,
@@ -47,6 +47,33 @@ export class Robot {
         this.f += 1;
     }
 
-    move() { }
-    report() { }
+    move(): void {
+        // @TODO: Do we want to throw an error when the robot wants
+        // to move in a bad direction? I would.
+
+        // @TODO: Is this ok, or do we want a more sophisticated
+        // method to report the position, see which moves are not allowed
+        // and not allow? 
+
+        switch (this.f) {
+            case Facing.West:
+                if (this.x > 0) this.x -= 1
+                break;
+            case Facing.South:
+                if (this.y > 0) this.y -= 1
+                break;
+            case Facing.North:
+                if (this.y < 4) this.y += 1
+                break;
+            case Facing.East:
+                if (this.x < 4) this.x += 1
+                break;
+            default:
+                break;
+        }
+    }
+
+    report(): string {
+        return `${this.x}, ${this.y}, ${facingDirection(this.f)}`
+    }
 }
