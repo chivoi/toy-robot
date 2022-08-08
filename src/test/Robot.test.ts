@@ -1,155 +1,153 @@
-import { Robot, Facing } from '../classes/Robot'
+import { Robot, Facing } from "../classes/Robot";
 
 describe("Robot", () => {
-    describe("commands", () => {
+  describe("commands", () => {
+    describe("place", () => {
+      it("creates a placed robot", () => {
+        const robot = Robot.place(1, 1, Facing.South);
 
-        describe("place", () => {
-            it("creates a placed robot", () => {
-                const robot = Robot.place(1, 1, Facing.South)
+        expect(robot.x).toBe(1);
+        expect(robot.y).toBe(1);
+        expect(robot.f).toBe(Facing.South);
+      });
 
-                expect(robot.x).toBe(1)
-                expect(robot.y).toBe(1)
-                expect(robot.f).toBe(Facing.South)
-            })
+      it("cannot create a robot placed beyond minimum x position", () => {
+        expect(() => {
+          Robot.place(-1, 0, Facing.North);
+        }).toThrow("invalid x");
+      });
 
-            it("cannot create a robot placed beyond minimum x position", () => {
-                expect(() => {
-                    Robot.place(-1, 0, Facing.North)
-                }).toThrow("invalid x")
-            })
+      it("cannot create a robot placed beyond maximum x position", () => {
+        expect(() => {
+          Robot.place(10, 0, Facing.North);
+        }).toThrow("invalid x");
+      });
 
-            it("cannot create a robot placed beyond maximum x position", () => {
-                expect(() => {
-                    Robot.place(10, 0, Facing.North)
-                }).toThrow("invalid x")
-            })
+      it("cannot create a robot placed beyond minimum y position", () => {
+        expect(() => {
+          Robot.place(0, -1, Facing.North);
+        }).toThrow("invalid y");
+      });
 
-            it("cannot create a robot placed beyond minimum y position", () => {
-                expect(() => {
-                    Robot.place(0, -1, Facing.North)
-                }).toThrow("invalid y")
-            })
+      it("cannot create a robot placed beyond maximum y position", () => {
+        expect(() => {
+          Robot.place(0, 10, Facing.North);
+        }).toThrow("invalid y");
+      });
 
-            it("cannot create a robot placed beyond maximum y position", () => {
-                expect(() => {
-                    Robot.place(0, 10, Facing.North)
-                }).toThrow("invalid y")
-            })
+      // @TODO: talk about this
+      // it("cannot create a robot with invalid facing", () => {
+      //     expect(() => {
+      //         Robot.place(0, 10, 4)
+      //     }).toThrow("invalid facing")
+      // })
 
-            // @TODO: talk about this
-            // it("cannot create a robot with invalid facing", () => {
-            //     expect(() => {
-            //         Robot.place(0, 10, 4)
-            //     }).toThrow("invalid facing")
-            // })
+      it("cannot create a robot with invalid facing", () => {
+        expect(() => {
+          Robot.place(0, 10, 5);
+        }).toThrow("invalid facing");
+        expect(() => {
+          Robot.place(0, 3, -9);
+        }).toThrow("invalid facing");
+      });
+    });
+  });
 
-            it("cannot create a robot with invalid facing", () => {
-                expect(() => {
-                    Robot.place(0, 10, 5)
-                }).toThrow("invalid facing")
-                expect(() => {
-                    Robot.place(0, 3, -9)
-                }).toThrow("invalid facing")
-            });
-        });
+  describe("left", () => {
+    it("rotates the robot counter-clockwise", () => {
+      const robot = Robot.place(0, 0, Facing.East);
 
-    })
+      robot.left();
 
-    describe("left", () => {
-        it("rotates the robot counter-clockwise", () => {
-            const robot = Robot.place(0, 0, Facing.East)
+      expect(robot.f).toBe(Facing.North);
 
-            robot.left()
+      robot.left();
 
-            expect(robot.f).toBe(Facing.North)
+      expect(robot.f).toBe(Facing.West);
 
-            robot.left()
+      robot.left();
 
-            expect(robot.f).toBe(Facing.West)
+      expect(robot.f).toBe(Facing.South);
 
-            robot.left()
+      robot.left();
 
-            expect(robot.f).toBe(Facing.South)
+      expect(robot.f).toBe(Facing.East);
+    });
+  });
 
-            robot.left()
+  describe("right", () => {
+    it("rotates the robot clockwise", () => {
+      const robot = Robot.place(0, 0, Facing.South);
 
-            expect(robot.f).toBe(Facing.East)
-        })
-    })
+      robot.right();
 
-    describe("right", () => {
-        it("rotates the robot clockwise", () => {
-            const robot = Robot.place(0, 0, Facing.South)
+      expect(robot.f).toBe(Facing.West);
 
-            robot.right()
+      robot.right();
 
-            expect(robot.f).toBe(Facing.West)
+      expect(robot.f).toBe(Facing.North);
 
-            robot.right()
+      robot.right();
 
-            expect(robot.f).toBe(Facing.North)
+      expect(robot.f).toBe(Facing.East);
 
-            robot.right()
+      robot.right();
 
-            expect(robot.f).toBe(Facing.East)
+      expect(robot.f).toBe(Facing.South);
+    });
+  });
 
-            robot.right()
+  describe("move", () => {
+    it("when the robot is facing west it moves west", () => {
+      const robot = Robot.place(3, 3, Facing.West);
 
-            expect(robot.f).toBe(Facing.South)
-        })
-    })
+      robot.move();
 
-    describe("move", () => {
-        it("when the robot is facing west it moves west", () => {
-            const robot = Robot.place(3, 3, Facing.West)
+      expect(robot.x).toBe(2);
+      expect(robot.y).toBe(3);
+    });
 
-            robot.move()
+    it("when the robot is facing south it moves south", () => {
+      const robot = Robot.place(3, 3, Facing.South);
 
-            expect(robot.x).toBe(2)
-            expect(robot.y).toBe(3)
-        })
+      robot.move();
 
-        it("when the robot is facing south it moves south", () => {
-            const robot = Robot.place(3, 3, Facing.South)
+      expect(robot.x).toBe(3);
+      expect(robot.y).toBe(2);
+    });
 
-            robot.move()
+    it("when the robot is facing north it moves north", () => {
+      const robot = Robot.place(3, 3, Facing.North);
 
-            expect(robot.x).toBe(3)
-            expect(robot.y).toBe(2)
-        })
+      robot.move();
 
-        it("when the robot is facing north it moves north", () => {
-            const robot = Robot.place(3, 3, Facing.North)
+      expect(robot.x).toBe(3);
+      expect(robot.y).toBe(4);
+    });
 
-            robot.move()
+    it("when the robot is facing east it moves east", () => {
+      const robot = Robot.place(3, 3, Facing.East);
 
-            expect(robot.x).toBe(3)
-            expect(robot.y).toBe(4)
-        })
+      robot.move();
 
-        it("when the robot is facing east it moves east", () => {
-            const robot = Robot.place(3, 3, Facing.East)
+      expect(robot.x).toBe(4);
+      expect(robot.y).toBe(3);
+    });
 
-            robot.move()
+    it("does not fall off the sides of the table", () => {
+      const robot = Robot.place(0, 0, Facing.South);
 
-            expect(robot.x).toBe(4)
-            expect(robot.y).toBe(3)
-        })
+      robot.move();
 
-        it("does not fall off the sides of the table", () => {
-            const robot = Robot.place(0, 0, Facing.South)
+      expect(robot.x).toBe(0);
+      expect(robot.y).toBe(0);
+    });
+  });
 
-            robot.move()
-
-            expect(robot.x).toBe(0)
-            expect(robot.y).toBe(0)
-        })
-    })
-
-    describe("report", () => {
-        it("returns a human readable report of the robot's state", () => {
-            const robot = Robot.place(0, 0, Facing.South)
-            expect(robot.report()).toEqual("0, 0, South")
-        })
-    })
-})
+  describe("report", () => {
+    it("returns a human readable report of the robot's state", () => {
+      const robot = Robot.place(0, 0, Facing.South);
+      expect(robot.report()).toEqual("0, 0, South");
+    });
+  });
+});
