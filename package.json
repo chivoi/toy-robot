@@ -17,7 +17,8 @@
     "test": "jest",
     "start:build": "tsc -w",
     "start:run": "nodemon build/index.js",
-    "start": "concurrently npm:start:*"
+    "start": "concurrently npm:start:*",
+    "pretty": "npx prettier --write ."
   },
   "dependencies": {
     "concurrently": "^7.3.0"
