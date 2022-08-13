@@ -1,4 +1,4 @@
-import { facingDirection, isOnTheBoard } from "./robotUtils";
+import { isOnTheBoard } from "../utils/robotUtils";
 
 export enum Facing {
   North,

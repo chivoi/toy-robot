@@ -1,4 +1,4 @@
-import { Robot, Facing } from "./Robot";
+import { Robot, Facing } from "../robot/Robot";
 
 describe("Robot", () => {
   describe("commands", () => {

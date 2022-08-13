@@ -1,4 +1,4 @@
-import { isOnTheBoard } from "./robotUtils";
+import { isOnTheBoard } from "../utils/robotUtils";
 
 describe("isOnTheBoard", () => {
   it("correctly detects when the coordinate is on the board", () => {
