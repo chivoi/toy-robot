@@ -22,19 +22,40 @@ const Grid = () => {
 }
 
 function App(): JSX.Element {
-  let robot;
   const [robotPosition, setRobotPosition] = useState({ x: -1, y: -1, f: -1 })
   const [command, setCommand] = useState('');
+  let robot = new Robot(robotPosition.x, robotPosition.y, robotPosition.f);
+
 
   const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const enteredCommand = event.target.value;
     setCommand(enteredCommand.toLowerCase());
   }
 
-  const executeCommand = (command: string): void => {
+  const executeCommand = (command: string): void | string => {
     if (command.includes("place")) {
       setRobotPosition(serializePlaceCommand(command))
+      return
     }
+    // @TODO: robot has front end, so position will be visible.
+    // Do we need REPORT command at all?
+    // if (command.includes("report")) {
+    //   return robot.report();
+    // }
+    switch (command) {
+      case "left":
+        robot.left()
+        break;
+      case "right":
+        robot.right()
+        break;
+      case "move":
+        robot.move()
+        break;
+      default:
+        break;
+    }
+    setRobotPosition({ x: robot.x, y: robot.y, f: robot.f })
   }
 
   const handleClick = (): void => {
@@ -72,5 +93,7 @@ export default App;
 
 // render the robot on a grid (visually)
 
-// allow user to send commands to robot
+// ✅ allow user to send commands to robot
+
+// We need errors when the robot is about to fall off the board.
 
