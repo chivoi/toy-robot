@@ -54,10 +54,6 @@ export class Robot {
     // @TODO: Do we want to throw an error when the robot wants
     // to move in a bad direction? I would.
 
-    // @TODO: Is this ok, or do we want a more sophisticated
-    // method to report the position, see which moves are not allowed
-    // and not allow?
-
     switch (this.f) {
       case Facing.West:
         if (this.x > 0) this.x -= 1;
@@ -77,6 +73,7 @@ export class Robot {
   }
 
   report(): string {
-    return `${this.x}, ${this.y}, ${facingDirection(this.f)}`;
+    const facingDirections = Object.values(Facing)
+    return `${this.x}, ${this.y}, ${facingDirections[this.f]}`;
   }
 }
