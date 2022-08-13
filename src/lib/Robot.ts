@@ -14,7 +14,7 @@ export class Robot {
   f: Facing;
 
   static place(x: number, y: number, f: Facing) {
-    if (!Object.values(Facing).includes(f)) {
+    if (!Object.values(Facing).includes(f) || f === 4) {
       throw new Error("invalid facing");
     }
     if (!isOnTheBoard(x) || !isOnTheBoard(y)) {
