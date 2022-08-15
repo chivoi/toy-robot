@@ -1,4 +1,4 @@
-import { Robot, Facing } from "./Robot";
+import { Robot, Facing } from "../robot/Robot";
 
 describe("Robot", () => {
   describe("commands", () => {
@@ -35,21 +35,11 @@ describe("Robot", () => {
         }).toThrow("invalid y");
       });
 
-      // @TODO: talk about this
-      // it("cannot create a robot with invalid facing", () => {
-      //     expect(() => {
-      //         Robot.place(0, 10, 4)
-      //     }).toThrow("invalid facing")
-      // })
-
       it("cannot create a robot with invalid facing", () => {
         expect(() => {
-          Robot.place(0, 10, 5);
-        }).toThrow("invalid facing");
-        expect(() => {
-          Robot.place(0, 3, -9);
-        }).toThrow("invalid facing");
-      });
+          Robot.place(0, 10, 4)
+        }).toThrow("invalid facing")
+      })
     });
   });
 

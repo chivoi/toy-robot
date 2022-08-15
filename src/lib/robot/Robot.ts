@@ -1,4 +1,6 @@
-import { facingDirection, isOnTheBoard } from "./robotUtils";
+import { isOnTheBoard } from "../utils/robotUtils";
+
+export const BOARDSIZE = 5;
 
 export enum Facing {
   North,
@@ -14,11 +16,11 @@ export class Robot {
   f: Facing;
 
   static place(x: number, y: number, f: Facing) {
-    if (!Object.values(Facing).includes(f)) {
+    if (!Object.values(Facing).includes(f) || f === 4) {
       throw new Error("invalid facing");
     }
-    if (!isOnTheBoard(x) || !isOnTheBoard(y)) {
-      throw new Error(`invalid ${!isOnTheBoard(x) ? "x" : "y"}`);
+    if (!isOnTheBoard(x, BOARDSIZE) || !isOnTheBoard(y, BOARDSIZE)) {
+      throw new Error(`invalid ${!isOnTheBoard(x, BOARDSIZE) ? "x" : "y"}`);
     }
     return new Robot(x, y, f);
   }
@@ -54,10 +56,6 @@ export class Robot {
     // @TODO: Do we want to throw an error when the robot wants
     // to move in a bad direction? I would.
 
-    // @TODO: Is this ok, or do we want a more sophisticated
-    // method to report the position, see which moves are not allowed
-    // and not allow?
-
     switch (this.f) {
       case Facing.West:
         if (this.x > 0) this.x -= 1;
@@ -77,6 +75,7 @@ export class Robot {
   }
 
   report(): string {
-    return `${this.x}, ${this.y}, ${facingDirection(this.f)}`;
+    const facingDirections = Object.values(Facing)
+    return `${this.x}, ${this.y}, ${facingDirections[this.f]}`;
   }
 }
