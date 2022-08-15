@@ -1,55 +1,85 @@
-import React, { PropsWithRef } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { Facing, Robot } from './lib/Robot'
+import React, { useState } from 'react';
+import { Facing, Robot } from './lib/robot/Robot'
+import { InputDirections } from './components/InputDirections';
+import { serializePlaceCommand } from './lib/utils/helpers';
 
 const Grid = () => {
   const gridStructure = Array(5).fill(0).map(row => Array(5).fill(0))
 
   return (
     <>
-    {
-      gridStructure
-      .map((row, index) => {
-        <div key={index}>
-          { row.map((col, index) => <span key={`col${index}`}>{col} </span>) }
-        </div>
-      })
-    }
+      {
+        gridStructure
+          .map((row, index) => {
+            <div key={index}>
+              {row.map((col, index) => <span key={`col${index}`}>{col} </span>)}
+            </div>
+          })
+      }
     </>
   )
 }
 
-const Hello = () => {
-  return <p>hello world</p>
-}
+function App(): JSX.Element {
+  const [robotPosition, setRobotPosition] = useState({ x: -1, y: -1, f: -1 })
+  const [command, setCommand] = useState('');
+  let robot = new Robot(robotPosition.x, robotPosition.y, robotPosition.f);
 
-function App() {
-  const robot = Robot.place(0, 0, Facing.North)
+
+  const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const enteredCommand = event.target.value;
+    setCommand(enteredCommand.toLowerCase());
+  }
+
+  const executeCommand = (command: string): void | string => {
+    if (command.includes("place")) {
+      setRobotPosition(serializePlaceCommand(command))
+      return
+    }
+    // @TODO: robot has front end, so position will be visible.
+    // Do we need REPORT command at all?
+    // if (command.includes("report")) {
+    //   return robot.report();
+    // }
+    switch (command) {
+      case "left":
+        robot.left()
+        break;
+      case "right":
+        robot.right()
+        break;
+      case "move":
+        robot.move()
+        break;
+      default:
+        break;
+    }
+    setRobotPosition({ x: robot.x, y: robot.y, f: robot.f })
+  }
+
+  const handleClick = (): void => {
+    executeCommand(command)
+  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Robot was placed on load of this page.
-        </p>
-  
-  
-        <Grid />
-        <Hello />
+        <p>Robot is at: {robotPosition.x}, {robotPosition.y}, {Facing[robotPosition.f]}</p>
 
-        <p>
-          Report: { robot.report() }
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
+        <Grid />
+
+        <input
+          value={command}
+          onChange={handleCommandInput}
+          placeholder="PLACE 0 0 NORTH"
+          className="input"
+        />
+
+        <button onClick={handleClick}>Execute!</button>
+
+        <InputDirections />
+
       </header>
     </div>
   );
@@ -62,5 +92,7 @@ export default App;
 
 // render the robot on a grid (visually)
 
-// allow user to send commands to robot
+// ✅ allow user to send commands to robot
+
+// We need errors when the robot is about to fall off the board.
 
