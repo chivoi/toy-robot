@@ -1,5 +1,7 @@
 import { isOnTheBoard } from "../utils/robotUtils";
 
+export const BOARDSIZE = 5;
+
 export enum Facing {
   North,
   East,
@@ -17,8 +19,8 @@ export class Robot {
     if (!Object.values(Facing).includes(f) || f === 4) {
       throw new Error("invalid facing");
     }
-    if (!isOnTheBoard(x) || !isOnTheBoard(y)) {
-      throw new Error(`invalid ${!isOnTheBoard(x) ? "x" : "y"}`);
+    if (!isOnTheBoard(x, BOARDSIZE) || !isOnTheBoard(y, BOARDSIZE)) {
+      throw new Error(`invalid ${!isOnTheBoard(x, BOARDSIZE) ? "x" : "y"}`);
     }
     return new Robot(x, y, f);
   }

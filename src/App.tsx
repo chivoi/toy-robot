@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
-import { serialize } from 'v8';
 import { serializePlaceCommand } from './lib/utils/helpers';
 
 const Grid = () => {

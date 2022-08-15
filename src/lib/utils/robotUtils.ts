@@ -1,3 +1,3 @@
-export function isOnTheBoard(num: number): boolean {
-  return num >= 0 && num <= 4;
+export function isOnTheBoard(num: number, boardSize: number): boolean {
+  return num >= 0 && num <= (boardSize - 1);
 }
