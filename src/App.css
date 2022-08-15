@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+  font-family: monospace
+}
+
+.grid {
+  display: flex;
+  justify-content: center;
+  margin-top: 150px;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 50px;
+  border: 1px solid grey;
+  font-size: 32px;
+}

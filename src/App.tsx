@@ -3,27 +3,68 @@ import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
 import { serializePlaceCommand } from './lib/utils/helpers';
 
-const Grid = () => {
-  const gridStructure = Array(5).fill(0).map(row => Array(5).fill(0))
+
+type GridProps = {
+  robot: Robot
+}
+
+const Grid = (props: GridProps) => {
+  const generateGrid = (robot: Robot, size: number = 5) => {
+    const grid = new Array(size)
+    for (let i = 0; i < size; i++) {
+      const row = new Array(size).fill(false)
+      grid[i] = row
+    }
+
+    grid[robot.x][size - 1 - robot.y]= true
+
+    return grid
+  }
+
+  const robotFacingStyle = (robot: Robot) => {
+    const rotationDegrees = 90 * robot.f + 180
+
+    return {
+      transform: `rotate(${rotationDegrees}deg)`
+    }
+  }
 
   return (
     <>
-      {
-        gridStructure
-          .map((row, index) => {
-            <div key={index}>
-              {row.map((col, index) => <span key={`col${index}`}>{col} </span>)}
-            </div>
+      <div className="grid">
+        {
+          generateGrid(props.robot).map((row, i) => {
+            return (
+              <div key={`row${i}`}>
+                {
+                  row.map((isRobotPresent: boolean, j: number) => {
+                    const key = `cell${i * j + j}`
+
+                    return(
+                      <span key={key} className='cell' style={ isRobotPresent ? robotFacingStyle(props.robot) : {}}>
+                        {
+                          isRobotPresent ? "🤖" : ""
+                        }
+                      </span>
+                    )
+                  })
+                }
+              </div>
+            )
           })
-      }
+        }
+      </div>
+      <p>
+        Report: { props.robot.report() }
+      </p>
     </>
   )
 }
 
 function App(): JSX.Element {
   const [robotPosition, setRobotPosition] = useState({ x: -1, y: -1, f: -1 })
+  const [robot] = useState(Robot.place(1, 1, Facing.North))
   const [command, setCommand] = useState('');
-  let robot = new Robot(robotPosition.x, robotPosition.y, robotPosition.f);
 
 
   const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +104,9 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Robot is at: {robotPosition.x}, {robotPosition.y}, {Facing[robotPosition.f]}</p>
+      <Grid robot={robot}/>
 
-
-        <Grid />
-
-        <input
+      <input
           value={command}
           onChange={handleCommandInput}
           placeholder="PLACE 0 0 NORTH"
@@ -79,8 +116,6 @@ function App(): JSX.Element {
         <button onClick={handleClick}>Execute!</button>
 
         <InputDirections />
-
-      </header>
     </div>
   );
 }
