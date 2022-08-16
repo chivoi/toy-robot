@@ -31,31 +31,25 @@ export class Robot {
     this.f = f;
   }
 
-  left(): void {
+  left(): Robot {
     if (this.f === 0) {
       this.f = Facing.__LENGTH - 1;
-      return;
-    }
-
-    this.f -= 1;
+    } else {
+      this.f -= 1;
+    };
+    return new Robot(this.x, this.y, this.f);
   }
 
-  // Do we want to "re-place"
-  // place() {}
-
-  right(): void {
+  right(): Robot {
     if (this.f === Facing.__LENGTH - 1) {
       this.f = 0;
-      return;
+    } else {
+      this.f += 1;
     }
-
-    this.f += 1;
+    return new Robot(this.x, this.y, this.f);
   }
 
-  move(): void {
-    // @TODO: Do we want to throw an error when the robot wants
-    // to move in a bad direction? I would.
-
+  move(): Robot {
     switch (this.f) {
       case Facing.West:
         if (this.x > 0) this.x -= 1;
@@ -72,6 +66,13 @@ export class Robot {
       default:
         break;
     }
+
+    if (!isOnTheBoard(this.x, 5) || !isOnTheBoard(this.y, 5)) {
+      console.log("I'm in the library - error")
+      throw new Error("The Robot can not move off the board!")
+    }
+
+    return new Robot(this.x, this.y, this.f);
   }
 
   report(): string {

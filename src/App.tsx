@@ -16,7 +16,7 @@ const Grid = (props: GridProps) => {
       grid[i] = row
     }
 
-    grid[robot.x][size - 1 - robot.y]= true
+    grid[robot.x][size - 1 - robot.y] = true
 
     return grid
   }
@@ -40,8 +40,8 @@ const Grid = (props: GridProps) => {
                   row.map((isRobotPresent: boolean, j: number) => {
                     const key = `cell${i * j + j}`
 
-                    return(
-                      <span key={key} className='cell' style={ isRobotPresent ? robotFacingStyle(props.robot) : {}}>
+                    return (
+                      <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle(props.robot) : {}}>
                         {
                           isRobotPresent ? "🤖" : ""
                         }
@@ -55,16 +55,16 @@ const Grid = (props: GridProps) => {
         }
       </div>
       <p>
-        Report: { props.robot.report() }
+        Report: {props.robot.report()}
       </p>
     </>
   )
 }
 
 function App(): JSX.Element {
-  const [robotPosition, setRobotPosition] = useState({ x: -1, y: -1, f: -1 })
-  const [robot] = useState(Robot.place(1, 1, Facing.North))
+  const [robot, setRobot] = useState(Robot.place(1, 1, Facing.North))
   const [command, setCommand] = useState('');
+  const [error, setError] = useState<Error | null>(null);
 
 
   const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,8 +73,9 @@ function App(): JSX.Element {
   }
 
   const executeCommand = (command: string): void | string => {
+    const { x, y, f } = serializePlaceCommand(command)
     if (command.includes("place")) {
-      setRobotPosition(serializePlaceCommand(command))
+      setRobot(Robot.place(x, y, f))
       return
     }
     // @TODO: robot has front end, so position will be visible.
@@ -82,20 +83,24 @@ function App(): JSX.Element {
     // if (command.includes("report")) {
     //   return robot.report();
     // }
-    switch (command) {
-      case "left":
-        robot.left()
-        break;
-      case "right":
-        robot.right()
-        break;
-      case "move":
-        robot.move()
-        break;
-      default:
-        break;
+    try {
+      switch (command) {
+        case "left":
+          setRobot(robot.left())
+          break;
+        case "right":
+          setRobot(robot.right())
+          break;
+        case "move":
+          setRobot(robot.move())
+          break;
+        default:
+          break;
+      }
+    } catch (error: any) {
+      console.log(error);
+      setError(error);
     }
-    setRobotPosition({ x: robot.x, y: robot.y, f: robot.f })
   }
 
   const handleClick = (): void => {
@@ -104,18 +109,20 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      <Grid robot={robot}/>
+      {error && <p>Error!</p>}
+
+      <Grid robot={robot} />
 
       <input
-          value={command}
-          onChange={handleCommandInput}
-          placeholder="PLACE 0 0 NORTH"
-          className="input"
-        />
+        value={command}
+        onChange={handleCommandInput}
+        placeholder="PLACE 0 0 NORTH"
+        className="input"
+      />
 
-        <button onClick={handleClick}>Execute!</button>
+      <button onClick={handleClick}>Execute!</button>
 
-        <InputDirections />
+      <InputDirections />
     </div>
   );
 }
