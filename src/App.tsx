@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 import React, { useState } from 'react';
 import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
@@ -19,7 +21,12 @@ function App(): JSX.Element {
     setError(null);
     const { x, y, f } = serializePlaceCommand(command)
     if (command.includes("place")) {
-      setRobot(Robot.place(x, y, f))
+      try {
+        setRobot(Robot.place(x, y, f))
+      } catch (error: any) {
+        error.message = `${_.capitalize(error.message)}: Enter valid robot position and facing, for example "3, 1, North" or "5 2 South"`
+        setError(error);
+      }
       return
     }
     try {
@@ -54,7 +61,7 @@ function App(): JSX.Element {
       <input
         value={command}
         onChange={handleCommandInput}
-        placeholder="PLACE 0 0 NORTH"
+        placeholder="place 0 0 north"
         className="input"
       />
 
@@ -68,8 +75,6 @@ function App(): JSX.Element {
 export default App;
 
 // TODOs:
-
-// We need errors when the robot is about to fall off the board.
 
 // robot is not on the grid on the initial render and appears there only after user places it
 
