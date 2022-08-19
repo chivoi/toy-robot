@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Facing, Robot } from './lib/robot/Robot'
+import { BOARDSIZE, Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
 import { serializePlaceCommand } from './lib/utils/helpers';
+import { isOnTheBoard } from './lib/utils/robotUtils';
 
 
 type GridProps = {
@@ -43,7 +44,7 @@ const Grid = (props: GridProps) => {
                     return (
                       <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle(props.robot) : {}}>
                         {
-                          isRobotPresent ? "🤖" : ""
+                          isRobotPresent ? "⬇️" : ""
                         }
                       </span>
                     )
@@ -62,8 +63,8 @@ const Grid = (props: GridProps) => {
 }
 
 function App(): JSX.Element {
-  const [robot, setRobot] = useState(Robot.place(1, 1, Facing.North))
-  const [command, setCommand] = useState('');
+  const [robot, setRobot] = useState<Robot>(Robot.place(1, 1, Facing.North))
+  const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
 
 
@@ -73,16 +74,12 @@ function App(): JSX.Element {
   }
 
   const executeCommand = (command: string): void | string => {
+    setError(null);
     const { x, y, f } = serializePlaceCommand(command)
     if (command.includes("place")) {
       setRobot(Robot.place(x, y, f))
       return
     }
-    // @TODO: robot has front end, so position will be visible.
-    // Do we need REPORT command at all?
-    // if (command.includes("report")) {
-    //   return robot.report();
-    // }
     try {
       switch (command) {
         case "left":
@@ -98,7 +95,6 @@ function App(): JSX.Element {
           break;
       }
     } catch (error: any) {
-      console.log(error);
       setError(error);
     }
   }
@@ -109,7 +105,7 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      {error && <p>Error!</p>}
+      {error && <p style={{ color: 'red' }}>{error.message}</p>}
 
       <Grid robot={robot} />
 
@@ -130,11 +126,12 @@ function App(): JSX.Element {
 export default App;
 
 // TODOs:
-// Make it into React style, so that robot state is managed in the app
-
-// render the robot on a grid (visually)
-
-// ✅ allow user to send commands to robot
 
 // We need errors when the robot is about to fall off the board.
+
+// robot is not on the grid on the initial render and appears there only after user places it
+
+// re-place or reset robot
+
+// front end
 
