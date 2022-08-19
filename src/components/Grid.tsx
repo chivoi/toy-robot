@@ -1,3 +1,5 @@
+import { Icon } from '@iconify/react'
+import React from 'react'
 import { Robot } from "../lib/robot/Robot"
 
 type GridProps = {
@@ -39,7 +41,7 @@ export const Grid = (props: GridProps) => {
                                         return (
                                             <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle(props.robot) : {}}>
                                                 {
-                                                    isRobotPresent ? "⬇️" : ""
+                                                    isRobotPresent ? <Icon icon="vscode-icons:file-type-robots" inline={true} /> : ""
                                                 }
                                             </span>
                                         )

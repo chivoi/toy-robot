@@ -1,13 +1,17 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { Icon } from '@iconify/react';
 
 import React, { useState } from 'react';
 import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
 import { serializePlaceCommand } from './lib/utils/helpers';
 import { Grid } from './components/Grid';
+import ErrorAlert from './components/ErrorAlert';
+
+const validCommands: Array<string> = ['place', 'move', 'left', 'right']
 
 function App(): JSX.Element {
-  const [robot, setRobot] = useState<Robot>(Robot.place(1, 1, Facing.North))
+  const [robot, setRobot] = useState<Robot>(Robot.place(1, 1, Facing.South))
   const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
 
@@ -18,7 +22,14 @@ function App(): JSX.Element {
   }
 
   const executeCommand = (command: string): void | string => {
+    // guard for invalid commands
+    if (!validCommands.includes(command.split(" ")[0])) {
+      setError(new Error("Invalid command: Enter valid command, see examples at the bottom of the page"))
+      return;
+    }
+    // clearning error so that it disappears from the page with the new command
     setError(null);
+
     const { x, y, f } = serializePlaceCommand(command)
     if (command.includes("place")) {
       try {
@@ -54,7 +65,8 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      {error && <p style={{ color: 'red' }}>{error.message}</p>}
+      {error && ErrorAlert(error.message)}
+      <h1>Move me <Icon icon="mdi:robot-happy" inline={true} /></h1>
 
       <Grid robot={robot} />
 
@@ -79,6 +91,8 @@ export default App;
 // robot is not on the grid on the initial render and appears there only after user places it
 
 // re-place or reset robot
+
+// errors: if not yet placed, can not right, left or move
 
 // front end
 

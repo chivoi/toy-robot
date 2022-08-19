@@ -1,5 +1,5 @@
 import { Facing } from "../robot/Robot";
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export interface RobotCoordinates {
     x: number
