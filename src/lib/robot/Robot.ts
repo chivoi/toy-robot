@@ -1,8 +1,3 @@
-import { result } from "lodash";
-import { isOnTheBoard } from "../utils/robotUtils";
-
-export const BOARDSIZE = 5;
-
 export enum Facing {
   North,
   East,
@@ -17,12 +12,6 @@ export class Robot {
   f: Facing;
 
   static place(x: number, y: number, f: Facing) {
-    if (!Object.values(Facing).includes(f) || f === 4) {
-      throw new Error("invalid facing");
-    }
-    if (!isOnTheBoard(x, BOARDSIZE) || !isOnTheBoard(y, BOARDSIZE)) {
-      throw new Error(`invalid ${!isOnTheBoard(x, BOARDSIZE) ? "x" : "y"}`);
-    }
     return new Robot(x, y, f)
   }
 
@@ -70,17 +59,18 @@ export class Robot {
         break;
     }
 
-    let result;
-    if (!isOnTheBoard(future.x, BOARDSIZE)
-      || !isOnTheBoard(future.y, BOARDSIZE)) {
-      result = new Robot(this.x, this.y, this.f)
-      throw new Error("💀 Can not move off the board 💀")
-    }
-    result = new Robot(future.x, future.y, this.f);
-    return result;
+    return new Robot(future.x, future.y, this.f);
   }
 
-  report(): string {
+  reportData() {
+    return {
+      x: this.x,
+      y: this.y,
+      f: this.f,
+    }
+  }
+
+  reportString(): string {
     const facingDirections = Object.values(Facing)
     return `${this.x}, ${this.y}, ${facingDirections[this.f]}`;
   }
