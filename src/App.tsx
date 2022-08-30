@@ -66,7 +66,7 @@ function App(): JSX.Element {
   return (
     <div className="App">
       {error && ErrorAlert(error.message)}
-      <h1>Move me <Icon icon="mdi:robot-happy" inline={true} /></h1>
+      <h1 style={{ color: "#C54D45" }}>Move me <Icon icon="mdi:robot-happy" inline={true} /></h1>
 
       <Grid robot={robot} />
 
