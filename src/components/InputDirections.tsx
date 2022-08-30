@@ -1,16 +1,16 @@
+
 import React from 'react'
 
 export const InputDirections = () => {
     return (
-        <>
-            <p>Available commands:</p>
+        <div className='commandContainer'>
+            <h3>Available commands:</h3>
             <ul style={{ listStyle: "none", textAlign: "left" }}>
-                <li><i>PLACE x y Facing</i> - places the robot on the board</li>
-                <li><i>LEFT</i> - totates the robot 90 degrees left</li>
-                <li><i>RIGHT</i> - totates the robot 90 degrees right</li>
-                <li><i>MOVE</i> - move robot 1 tile towards where it's facing</li>
-                <li><i>REPORT</i> - report robot's position and facing direction</li>
+                <li><i><b>PLACE x y Facing</b></i> - places the robot on the board</li>
+                <li><i><b>LEFT</b></i> - totates the robot 90 degrees left</li>
+                <li><i><b>RIGHT</b></i> - totates the robot 90 degrees right</li>
+                <li><i><b>MOVE</b></i> - move robot 1 tile towards where it's facing</li>
             </ul>
-        </>
+        </div>
     );
 };

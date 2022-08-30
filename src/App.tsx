@@ -1,69 +1,18 @@
+import _ from 'lodash';
+import { Icon } from '@iconify/react';
+
 import React, { useState } from 'react';
 import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
 import { serializePlaceCommand } from './lib/utils/helpers';
+import { Grid } from './components/Grid';
+import ErrorAlert from './components/ErrorAlert';
 
-
-type GridProps = {
-  robot: Robot
-}
-
-const Grid = (props: GridProps) => {
-  const generateGrid = (robot: Robot, size: number = 5) => {
-    const grid = new Array(size)
-    for (let i = 0; i < size; i++) {
-      const row = new Array(size).fill(false)
-      grid[i] = row
-    }
-
-    grid[robot.x][size - 1 - robot.y] = true
-
-    return grid
-  }
-
-  const robotFacingStyle = (robot: Robot) => {
-    const rotationDegrees = 90 * robot.f + 180
-
-    return {
-      transform: `rotate(${rotationDegrees}deg)`
-    }
-  }
-
-  return (
-    <>
-      <div className="grid">
-        {
-          generateGrid(props.robot).map((row, i) => {
-            return (
-              <div key={`row${i}`}>
-                {
-                  row.map((isRobotPresent: boolean, j: number) => {
-                    const key = `cell${i * j + j}`
-
-                    return (
-                      <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle(props.robot) : {}}>
-                        {
-                          isRobotPresent ? "🤖" : ""
-                        }
-                      </span>
-                    )
-                  })
-                }
-              </div>
-            )
-          })
-        }
-      </div>
-      <p>
-        Report: {props.robot.report()}
-      </p>
-    </>
-  )
-}
+const validCommands: Array<string> = ['place', 'move', 'left', 'right']
 
 function App(): JSX.Element {
-  const [robot, setRobot] = useState(Robot.place(1, 1, Facing.North))
-  const [command, setCommand] = useState('');
+  const [robot, setRobot] = useState<Robot>(Robot.place(1, 1, Facing.South))
+  const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
 
 
@@ -73,16 +22,24 @@ function App(): JSX.Element {
   }
 
   const executeCommand = (command: string): void | string => {
+    // guard for invalid commands
+    if (!validCommands.includes(command.split(" ")[0])) {
+      setError(new Error("Invalid command: Enter valid command, see examples at the bottom of the page"))
+      return;
+    }
+    // clearning error so that it disappears from the page with the new command
+    setError(null);
+
     const { x, y, f } = serializePlaceCommand(command)
     if (command.includes("place")) {
-      setRobot(Robot.place(x, y, f))
+      try {
+        setRobot(Robot.place(x, y, f))
+      } catch (error: any) {
+        error.message = `${_.capitalize(error.message)}: Enter valid robot position and facing, for example "3, 1, North" or "5 2 South"`
+        setError(error);
+      }
       return
     }
-    // @TODO: robot has front end, so position will be visible.
-    // Do we need REPORT command at all?
-    // if (command.includes("report")) {
-    //   return robot.report();
-    // }
     try {
       switch (command) {
         case "left":
@@ -98,7 +55,6 @@ function App(): JSX.Element {
           break;
       }
     } catch (error: any) {
-      console.log(error);
       setError(error);
     }
   }
@@ -109,14 +65,15 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      {error && <p>Error!</p>}
+      {error && ErrorAlert(error.message)}
+      <h1 style={{ color: "#C54D45" }}>Move me <Icon icon="mdi:robot-happy" inline={true} /></h1>
 
       <Grid robot={robot} />
 
       <input
         value={command}
         onChange={handleCommandInput}
-        placeholder="PLACE 0 0 NORTH"
+        placeholder="place 0 0 north"
         className="input"
       />
 
@@ -130,11 +87,12 @@ function App(): JSX.Element {
 export default App;
 
 // TODOs:
-// Make it into React style, so that robot state is managed in the app
 
-// render the robot on a grid (visually)
+// robot is not on the grid on the initial render and appears there only after user places it
 
-// ✅ allow user to send commands to robot
+// re-place or reset robot
 
-// We need errors when the robot is about to fall off the board.
+// errors: if not yet placed, can not right, left or move
+
+// front end
 

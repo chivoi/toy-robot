@@ -1,3 +1,4 @@
+import { result } from "lodash";
 import { isOnTheBoard } from "../utils/robotUtils";
 
 export const BOARDSIZE = 5;
@@ -22,7 +23,7 @@ export class Robot {
     if (!isOnTheBoard(x, BOARDSIZE) || !isOnTheBoard(y, BOARDSIZE)) {
       throw new Error(`invalid ${!isOnTheBoard(x, BOARDSIZE) ? "x" : "y"}`);
     }
-    return new Robot(x, y, f);
+    return new Robot(x, y, f)
   }
 
   constructor(x: number, y: number, f: Facing) {
@@ -50,29 +51,33 @@ export class Robot {
   }
 
   move(): Robot {
+    const future = { x: this.x, y: this.y };
+
     switch (this.f) {
       case Facing.West:
-        if (this.x > 0) this.x -= 1;
+        future.x -= 1;
         break;
       case Facing.South:
-        if (this.y > 0) this.y -= 1;
+        future.y -= 1;
         break;
       case Facing.North:
-        if (this.y < 4) this.y += 1;
+        future.y += 1;
         break;
       case Facing.East:
-        if (this.x < 4) this.x += 1;
+        future.x += 1;
         break;
       default:
         break;
     }
 
-    if (!isOnTheBoard(this.x, 5) || !isOnTheBoard(this.y, 5)) {
-      console.log("I'm in the library - error")
-      throw new Error("The Robot can not move off the board!")
+    let result;
+    if (!isOnTheBoard(future.x, BOARDSIZE)
+      || !isOnTheBoard(future.y, BOARDSIZE)) {
+      result = new Robot(this.x, this.y, this.f)
+      throw new Error("💀 Can not move off the board 💀")
     }
-
-    return new Robot(this.x, this.y, this.f);
+    result = new Robot(future.x, future.y, this.f);
+    return result;
   }
 
   report(): string {
