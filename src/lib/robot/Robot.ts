@@ -1,8 +1,3 @@
-import { result } from "lodash";
-import { isOnTheBoard } from "../utils/robotUtils";
-
-export const BOARDSIZE = 5;
-
 export enum Facing {
   North,
   East,
@@ -11,25 +6,53 @@ export enum Facing {
   __LENGTH,
 }
 
+type Position3D = {
+  x: number
+  y: number
+  z: number
+}
+
 export class Robot {
-  x: number;
-  y: number;
+  position: Position3D;
   f: Facing;
+  rotorOn: boolean;
 
   static place(x: number, y: number, f: Facing) {
-    if (!Object.values(Facing).includes(f) || f === 4) {
-      throw new Error("invalid facing");
-    }
-    if (!isOnTheBoard(x, BOARDSIZE) || !isOnTheBoard(y, BOARDSIZE)) {
-      throw new Error(`invalid ${!isOnTheBoard(x, BOARDSIZE) ? "x" : "y"}`);
-    }
-    return new Robot(x, y, f)
+    return new Robot({x, y, z: 0}, f, false)
   }
 
-  constructor(x: number, y: number, f: Facing) {
-    this.x = x;
-    this.y = y;
+  constructor(position: Position3D, f: Facing, rotorOn: boolean) {
+    this.position = position
     this.f = f;
+    this.rotorOn = rotorOn;
+  }
+
+  rotorStart(): Robot {
+    return new Robot(this.position, this.f, true)
+  }
+
+  rotorStop(): Robot {
+    return new Robot(this.position, this.f, false)
+  }
+
+  up(): Robot {
+    const newPosition = {
+      x: this.position.x,
+      y: this.position.y,
+      z: this.position.z + 1
+    }
+
+    return new Robot(newPosition, this.f, this.rotorOn)
+  }
+
+  down(): Robot {
+    const newPosition = {
+      x: this.position.x,
+      y: this.position.y,
+      z: this.position.z - 1
+    }
+
+    return new Robot(newPosition, this.f, this.rotorOn)
   }
 
   left(): Robot {
@@ -38,7 +61,7 @@ export class Robot {
     } else {
       this.f -= 1;
     };
-    return new Robot(this.x, this.y, this.f);
+    return new Robot(this.position, this.f, this.rotorOn);
   }
 
   right(): Robot {
@@ -47,11 +70,11 @@ export class Robot {
     } else {
       this.f += 1;
     }
-    return new Robot(this.x, this.y, this.f);
+    return new Robot(this.position, this.f, this.rotorOn);
   }
 
   move(): Robot {
-    const future = { x: this.x, y: this.y };
+    const future = this.position
 
     switch (this.f) {
       case Facing.West:
@@ -70,18 +93,19 @@ export class Robot {
         break;
     }
 
-    let result;
-    if (!isOnTheBoard(future.x, BOARDSIZE)
-      || !isOnTheBoard(future.y, BOARDSIZE)) {
-      result = new Robot(this.x, this.y, this.f)
-      throw new Error("💀 Can not move off the board 💀")
-    }
-    result = new Robot(future.x, future.y, this.f);
-    return result;
+    return new Robot(future, this.f, this.rotorOn);
   }
 
-  report(): string {
+  reportData() {
+    return {
+      ...this.position,
+      f: this.f,
+      rotorOn: this.rotorOn
+    }
+  }
+
+  reportString(): string {
     const facingDirections = Object.values(Facing)
-    return `${this.x}, ${this.y}, ${facingDirections[this.f]}`;
+    return `${this.position.x}, ${this.position.y}, ${facingDirections[this.f]}`;
   }
 }

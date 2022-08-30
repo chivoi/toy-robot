@@ -2,19 +2,22 @@ import _ from 'lodash';
 import { Icon } from '@iconify/react';
 
 import React, { useState } from 'react';
-import { Facing, Robot } from './lib/robot/Robot'
 import { InputDirections } from './components/InputDirections';
-import { serializePlaceCommand } from './lib/utils/helpers';
 import { Grid } from './components/Grid';
 import ErrorAlert from './components/ErrorAlert';
+import { RobotSession, RobotCoordinates } from './lib/robot/RobotSession';
 
-const validCommands: Array<string> = ['place', 'move', 'left', 'right']
+const BoardSize = 5
+
+// TODOs
+// - Bug when going back, turn left/right doesn't seem to work
+// - Error messages
 
 function App(): JSX.Element {
-  const [robot, setRobot] = useState<Robot>(Robot.place(1, 1, Facing.South))
   const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
-
+  const [session] = useState(new RobotSession(BoardSize))
+  const [robot, setRobot] = useState<RobotCoordinates>(session.current())
 
   const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const enteredCommand = event.target.value;
@@ -22,38 +25,23 @@ function App(): JSX.Element {
   }
 
   const executeCommand = (command: string): void | string => {
-    // guard for invalid commands
-    if (!validCommands.includes(command.split(" ")[0])) {
-      setError(new Error("Invalid command: Enter valid command, see examples at the bottom of the page"))
-      return;
-    }
-    // clearning error so that it disappears from the page with the new command
+    // cleaning error so that it disappears from the page with the new command
     setError(null);
 
-    const { x, y, f } = serializePlaceCommand(command)
-    if (command.includes("place")) {
-      try {
-        setRobot(Robot.place(x, y, f))
-      } catch (error: any) {
-        error.message = `${_.capitalize(error.message)}: Enter valid robot position and facing, for example "3, 1, North" or "5 2 South"`
-        setError(error);
-      }
-      return
-    }
     try {
-      switch (command) {
-        case "left":
-          setRobot(robot.left())
-          break;
-        case "right":
-          setRobot(robot.right())
-          break;
-        case "move":
-          setRobot(robot.move())
-          break;
-        default:
-          break;
-      }
+      session.do(command)
+      setRobot(session.current())
+    } catch (error: any) {
+      setError(error);
+    }
+  }
+
+  const executeBack = () => {
+    setError(null);
+
+    try {
+      session.back()
+      setRobot(session.current())
     } catch (error: any) {
       setError(error);
     }
@@ -68,7 +56,7 @@ function App(): JSX.Element {
       {error && ErrorAlert(error.message)}
       <h1 style={{ color: "#C54D45" }}>Move me <Icon icon="mdi:robot-happy" inline={true} /></h1>
 
-      <Grid robot={robot} />
+      <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} />
 
       <input
         value={command}
@@ -78,6 +66,7 @@ function App(): JSX.Element {
       />
 
       <button onClick={handleClick}>Execute!</button>
+      <button onClick={executeBack}>Back!</button>
 
       <InputDirections />
     </div>
