@@ -2,7 +2,12 @@ import { Robot, Facing } from './Robot'
 import _ from 'lodash'
 
 enum CommandType {
-    PLACE, MOVE, LEFT, RIGHT
+    PLACE, MOVE, LEFT, RIGHT, OBSTACLE
+}
+
+type ObstaclePosition = {
+    x: number
+    y: number
 }
 
 type Command = {
@@ -21,6 +26,7 @@ export type RobotCoordinates = {
 export class RobotSession {
     boardSize: number
     history: [Robot]
+    obstacles: ObstaclePosition[]
 
     /**
      *  A RobotSession represents a toy robot and a history of commands
@@ -28,6 +34,7 @@ export class RobotSession {
     constructor(boardSize: number = 5) {
         this.boardSize = boardSize
         this.history = [Robot.place(0, 0, Facing.North)]
+        this.obstacles = new Array<ObstaclePosition>()
     }
 
     do = (something: string) => {
@@ -47,7 +54,9 @@ export class RobotSession {
     current = () => this.history[this.history.length - 1].reportData()
 
     private parseCommand = (cmd: string): Command => {
-        switch (cmd) {
+        const tokens = cmd.split(" ")
+
+        switch (tokens[0]) {
             case "left":
                 return { type: CommandType.LEFT }
             case "right":
@@ -55,8 +64,12 @@ export class RobotSession {
             case "move":
                 return { type: CommandType.MOVE }
             case "place":
+                // TODO: fix this
                 const { x, y, f } = this.serializePlaceCommand(cmd)
                 return { type: CommandType.PLACE, x, y, f }
+            case "obstacle":
+                const obstaclePosition = this.parseObstacleCommand(cmd)
+                return { type: CommandType.OBSTACLE, ...obstaclePosition }
             default:
                 throw new Error("unknown command");
         }
@@ -83,6 +96,14 @@ export class RobotSession {
 
                 break;
 
+            case CommandType.OBSTACLE:
+                if ([cmd.x, cmd.y].every(val => val !== null)) {
+                    this.obstacles.push({ x: cmd.x!, y: cmd.y! })
+                    break;
+                }
+                // throw an error if they're null
+
+                throw new Error("x and y can't be null");
             default:
                 throw new Error("unknown command")
         }
@@ -116,7 +137,7 @@ export class RobotSession {
     private move = () => {
         const nextRobot = this.history[this.history.length - 1].move()
 
-        if (!this.isOnTheBoard(nextRobot.x) || !this.isOnTheBoard(nextRobot.y)) {
+        if (!this.isOnTheBoard(nextRobot.position.x) || !this.isOnTheBoard(nextRobot.position.y)) {
             throw new Error("💀 Can not move off the board 💀")
         }
 
@@ -127,6 +148,15 @@ export class RobotSession {
         const coordinates: Array<string> = command.split(" ").splice(1).map(coord => coord.replace(/[\W_]+/g, ""))
         const facing = Object.values(Facing).indexOf(_.capitalize(coordinates[2]));
         return { x: Number(coordinates[0]), y: Number(coordinates[1]), f: facing }
+    }
+
+    private parseObstacleCommand = (command: string): ObstaclePosition => {
+        const tokens = command.split(" ")
+
+        return {
+            x: Number(tokens[1]),
+            y: Number(tokens[2])
+        }
     }
 
     private isOnTheBoard = (num: number): boolean  => {

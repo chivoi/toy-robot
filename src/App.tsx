@@ -9,6 +9,10 @@ import { RobotSession, RobotCoordinates } from './lib/robot/RobotSession';
 
 const BoardSize = 5
 
+// TODOs
+// - Bug when going back, turn left/right doesn't seem to work
+// - Error messages
+
 function App(): JSX.Element {
   const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
@@ -38,7 +42,6 @@ function App(): JSX.Element {
     try {
       session.back()
       setRobot(session.current())
-      console.log(session)
     } catch (error: any) {
       setError(error);
     }
