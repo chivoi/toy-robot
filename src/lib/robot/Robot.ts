@@ -106,6 +106,7 @@ export class Robot {
 
   reportString(): string {
     const facingDirections = Object.values(Facing)
-    return `${this.position.x}, ${this.position.y}, ${facingDirections[this.f]}`;
+    const rotorString = this.rotorOn ? "On": "Off"
+    return `X: ${this.position.x}, Y: ${this.position.y}, Z: ${this.position.z}, FACING: ${facingDirections[this.f]}, ROTOR: ${rotorString}`;
   }
 }
