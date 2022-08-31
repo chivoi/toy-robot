@@ -12,6 +12,50 @@ describe("Robot", () => {
     });
   });
 
+  describe("rotorStart", () => {
+    it("when rotorOn is false it is set to true", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 0 }, Facing.East, false).rotorStart()
+
+      expect(robot.rotorOn).toBe(true)
+    })
+
+    it("when rotorOn is true it stays true", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 0 }, Facing.East, true).rotorStart()
+
+      expect(robot.rotorOn).toBe(true)
+    })
+  })
+
+  describe("rotorStop", () => {
+    it("when rotorOn is false it stays false", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, false).rotorStop()
+
+      expect(robot.rotorOn).toBe(false)
+    })
+
+    it("when rotorOn is true it is set to false", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).rotorStop()
+
+      expect(robot.rotorOn).toBe(false)
+    })
+  })
+
+  describe("up", () => {
+    it("increases the z-coordinate of the robot", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).up()
+
+      expect(robot.position.z).toBe(4)
+    })
+  })
+
+  describe("down", () => {
+    it("decreases the z-coordinate of the robot", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).down()
+
+      expect(robot.position.z).toBe(2)
+    })
+  })
+
   describe("left", () => {
     it("rotates the robot counter-clockwise", () => {
       const robot = Robot.place(0, 0, Facing.East);
