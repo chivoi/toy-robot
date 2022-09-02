@@ -57,7 +57,7 @@ function App(): JSX.Element {
     <>
       <div className="App">
         {error && ErrorAlert(error.message)}
-        <h1 style={{ color: "#C54D45" }}>M<Icon icon="mdi:robot-happy" inline={true} />ve me</h1>
+        <h1 style={{ color: "#DD715B" }}>M<Icon icon="mdi:robot-happy" inline={true} style={{ color: "#C54D45" }} />ve me</h1>
         <div className="GridRulesContainer">
           <div className="GridInputButtonsContainer">
             <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} />
@@ -77,7 +77,7 @@ function App(): JSX.Element {
           <InputDirections />
         </div>
       </div>
-      <Icon icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.2em', bottom: '0.0001em', zIndex: '-1' }} />
+      <Icon icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.1em', bottom: '0.0001em', zIndex: '-1' }} />
     </>
   );
 }

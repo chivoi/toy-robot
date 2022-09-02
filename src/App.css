@@ -46,7 +46,7 @@ body {
   height: 100%;
   align-items: center;
   background: rgb(255, 255, 255);
-  background: linear-gradient(30deg, rgb(255, 106, 95, 0.7) 30%, rgba(255, 255, 255, 1) 30%);
+  background: linear-gradient(30deg, rgb(255, 106, 95, 0.3) 30%, rgba(255, 255, 255, 1) 30%);
 }
 
 html {
@@ -59,4 +59,8 @@ html {
 
 ul {
   padding-left: 0;
+}
+
+h1 {
+  text-shadow: 1px 2px 0 rgb(255, 106, 95, 0.3);
 }
