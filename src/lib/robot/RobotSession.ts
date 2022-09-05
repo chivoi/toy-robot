@@ -6,7 +6,7 @@ enum CommandType {
     PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
 }
 
-type ObstaclePosition = {
+export type ObstaclePosition = {
     x: number
     y: number
 }

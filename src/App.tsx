@@ -60,7 +60,7 @@ function App(): JSX.Element {
         <h1 style={{ color: "#DD715B" }}>M<Icon icon="mdi:robot-happy" inline={true} style={{ color: "#C54D45" }} />ve me</h1>
         <div className="GridRulesContainer">
           <div className="GridInputButtonsContainer">
-            <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} />
+            <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} obstacles={session.obstacles} />
 
             <input
               value={command}
@@ -70,6 +70,7 @@ function App(): JSX.Element {
             />
 
             <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
+            <p><b>Obstacles:</b> {JSON.stringify(session.obstacles)}</p>
 
             <button onClick={handleClick}>Execute!</button>
             <button onClick={executeBack}>Back!</button>
