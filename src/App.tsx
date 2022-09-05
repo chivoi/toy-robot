@@ -69,7 +69,7 @@ function App(): JSX.Element {
               className="input"
             />
 
-            <p>Report: {robot.x}, {robot.y}, {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
+            <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
 
             <button onClick={handleClick}>Execute!</button>
             <button onClick={executeBack}>Back!</button>

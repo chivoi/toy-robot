@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { cp } from 'fs'
 
 enum CommandType {
-    PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR_START, ROTOR, UP, DOWN
+    PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
 }
 
 type ObstaclePosition = {
@@ -75,6 +75,11 @@ export class RobotSession {
             case "obstacle":
                 const obstaclePosition = this.parseObstacleCommand(cmd)
                 return { type: CommandType.OBSTACLE, ...obstaclePosition }
+            case "up":
+                return { type: CommandType.UP }
+            case "down":
+                return { type: CommandType.DOWN }
+
             default:
                 throw new Error("unknown command");
         }
@@ -86,21 +91,22 @@ export class RobotSession {
                 if ([cmd.x, cmd.y, cmd.f].every(val => val !== null)) {
                     this.place(cmd.x!, cmd.y!, cmd.f!)
                 }
-
                 break;
             case CommandType.MOVE:
                 this.move()
-
                 break;
             case CommandType.LEFT:
                 this.left()
-
                 break;
             case CommandType.RIGHT:
                 this.right()
-
                 break;
-
+            case CommandType.UP:
+                this.up()
+                break;
+            case CommandType.DOWN:
+                this.down()
+                break;
             case CommandType.ROTOR:
                 if (cmd.rotorOn) this.rotor("start");
                 if (!cmd.rotorOn) this.rotor("stop");
@@ -165,6 +171,19 @@ export class RobotSession {
 
         this.history.push(nextRobot)
     }
+
+    private up = () => {
+        const nextRobot = this.history[this.history.length - 1].up()
+        // @TODO: add error handling for when more than 4 units
+        this.history.push(nextRobot)
+    }
+
+    private down = () => {
+        const nextRobot = this.history[this.history.length - 1].down()
+        // @TODO: add error handling for when on the ground
+        this.history.push(nextRobot)
+    }
+
 
     private serializePlaceCommand = (command: string): RobotCoordinates => {
         const coordinates: Array<string> = command.split(" ").splice(1).map(coord => coord.replace(/[\W_]+/g, ""))
