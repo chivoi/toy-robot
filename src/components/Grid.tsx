@@ -34,11 +34,11 @@ export const Grid = (props: GridProps) => {
         }
     }
 
-    // @TODO this places only one on the board. Need to re-render the board
-    // every time the obstacle is placed like with robot
     const isObstaclePresent = (obstacles: ObstaclePosition[], x: number, y: number) => {
-        const xOnTheBoard = boardSize - 3 - x
-        const yOnTheBoard = boardSize - 1 - y
+        const xOnTheBoard = x;
+        const yOnTheBoard = boardSize - 1 - y;
+        // @TODO expand this to find number of occurences of an obstacle
+        // and it can not be more than 4
         return obstacles.find(obst => obst.x === xOnTheBoard && obst.y === yOnTheBoard);
     }
 
