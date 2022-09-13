@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Icon } from '@iconify/react'
 import React from 'react'
 import { Facing, Robot } from "../lib/robot/Robot"
@@ -34,12 +35,18 @@ export const Grid = (props: GridProps) => {
         }
     }
 
-    const isObstaclePresent = (obstacles: ObstaclePosition[], x: number, y: number) => {
+    const numObstaclesPresent = (obstacles: ObstaclePosition[], x: number, y: number): number => {
         const xOnTheBoard = x;
         const yOnTheBoard = boardSize - 1 - y;
         // @TODO expand this to find number of occurences of an obstacle
         // and it can not be more than 4
-        return obstacles.find(obst => obst.x === xOnTheBoard && obst.y === yOnTheBoard);
+        // obstacles.find(obst => obst.x === xOnTheBoard && obst.y === yOnTheBoard);
+        return _.filter(obstacles, function (obst) { return obst.x === xOnTheBoard && obst.y === yOnTheBoard }).length
+    }
+
+    const generateObstaclesPerCell = (i: number, j: number, obstacles: ObstaclePosition[]): string[] => {
+        const numObstacles = numObstaclesPresent(obstacles, i, j);
+        return new Array(numObstacles).fill("⛰️")
     }
 
     return (
@@ -55,11 +62,14 @@ export const Grid = (props: GridProps) => {
 
                                         return (
                                             <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle() : {}}>
-                                                {
-                                                    isRobotPresent ? <Icon icon="vscode-icons:file-type-robots" inline={true} /> : ""
-                                                }
-                                                {isObstaclePresent(obstacles, i, j) ? "⛰️" : ""}
+                                                <>
+                                                    {
+                                                        isRobotPresent ? <Icon icon="vscode-icons:file-type-robots" inline={true} /> : ""
+                                                    }
+                                                    {generateObstaclesPerCell(i, j, obstacles)}
+                                                </>
                                             </span>
+
                                         )
                                     })
                                 }
