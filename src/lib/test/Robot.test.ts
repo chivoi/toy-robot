@@ -6,42 +6,55 @@ describe("Robot", () => {
       it("creates a placed robot", () => {
         const robot = Robot.place(1, 1, Facing.South);
 
-        expect(robot.x).toBe(1);
-        expect(robot.y).toBe(1);
+        expect(robot.position).toEqual({ x: 1, y: 1, z: 0 });
         expect(robot.f).toBe(Facing.South);
       });
-
-      it("cannot create a robot placed beyond minimum x position", () => {
-        expect(() => {
-          Robot.place(-1, 0, Facing.North);
-        }).toThrow("invalid x");
-      });
-
-      it("cannot create a robot placed beyond maximum x position", () => {
-        expect(() => {
-          Robot.place(10, 0, Facing.North);
-        }).toThrow("invalid x");
-      });
-
-      it("cannot create a robot placed beyond minimum y position", () => {
-        expect(() => {
-          Robot.place(0, -1, Facing.North);
-        }).toThrow("invalid y");
-      });
-
-      it("cannot create a robot placed beyond maximum y position", () => {
-        expect(() => {
-          Robot.place(0, 10, Facing.North);
-        }).toThrow("invalid y");
-      });
-
-      it("cannot create a robot with invalid facing", () => {
-        expect(() => {
-          Robot.place(0, 10, 4)
-        }).toThrow("invalid facing")
-      })
     });
   });
+
+  describe("rotorStart", () => {
+    it("when rotorOn is false it is set to true", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 0 }, Facing.East, false).rotorStart()
+
+      expect(robot.rotorOn).toBe(true)
+    })
+
+    it("when rotorOn is true it stays true", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 0 }, Facing.East, true).rotorStart()
+
+      expect(robot.rotorOn).toBe(true)
+    })
+  })
+
+  describe("rotorStop", () => {
+    it("when rotorOn is false it stays false", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, false).rotorStop()
+
+      expect(robot.rotorOn).toBe(false)
+    })
+
+    it("when rotorOn is true it is set to false", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).rotorStop()
+
+      expect(robot.rotorOn).toBe(false)
+    })
+  })
+
+  describe("up", () => {
+    it("increases the z-coordinate of the robot", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).up()
+
+      expect(robot.position.z).toBe(4)
+    })
+  })
+
+  describe("down", () => {
+    it("decreases the z-coordinate of the robot", () => {
+      const robot = new Robot({ x: 0, y: 0, z: 3 }, Facing.East, true).down()
+
+      expect(robot.position.z).toBe(2)
+    })
+  })
 
   describe("left", () => {
     it("rotates the robot counter-clockwise", () => {
@@ -93,8 +106,7 @@ describe("Robot", () => {
 
       robot.move();
 
-      expect(robot.x).toBe(2);
-      expect(robot.y).toBe(3);
+      expect(robot.position).toEqual({ x: 2, y: 3, z: 0 });
     });
 
     it("when the robot is facing south it moves south", () => {
@@ -102,8 +114,7 @@ describe("Robot", () => {
 
       robot.move();
 
-      expect(robot.x).toBe(3);
-      expect(robot.y).toBe(2);
+      expect(robot.position).toEqual({ x: 3, y: 2, z: 0 });
     });
 
     it("when the robot is facing north it moves north", () => {
@@ -111,8 +122,7 @@ describe("Robot", () => {
 
       robot.move();
 
-      expect(robot.x).toBe(3);
-      expect(robot.y).toBe(4);
+      expect(robot.position).toEqual({ x: 3, y: 4, z: 0 });
     });
 
     it("when the robot is facing east it moves east", () => {
@@ -120,24 +130,21 @@ describe("Robot", () => {
 
       robot.move();
 
-      expect(robot.x).toBe(4);
-      expect(robot.y).toBe(3);
-    });
-
-    it("does not fall off the sides of the table", () => {
-      const robot = Robot.place(0, 0, Facing.South);
-
-      robot.move();
-
-      expect(robot.x).toBe(0);
-      expect(robot.y).toBe(0);
+      expect(robot.position).toEqual({ x: 4, y: 3, z: 0 });
     });
   });
 
   describe("report", () => {
     it("returns a human readable report of the robot's state", () => {
       const robot = Robot.place(0, 0, Facing.South);
-      expect(robot.report()).toEqual("0, 0, South");
+      expect(robot.reportString()).toEqual("X: 0, Y: 0, Z: 0, FACING: South, ROTOR: Off");
     });
   });
+
+  describe("reportData", () => {
+    it("returns a machine readable report of the robot's state", () => {
+      const robot = Robot.place(0, 0, Facing.South);
+      expect(robot.reportData()).toEqual({ x: 0, y: 0, z: 0, f: Facing.South, rotorOn: false });
+    })
+  })
 });
