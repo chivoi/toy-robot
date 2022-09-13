@@ -1,11 +1,12 @@
 import { Robot, Facing } from './Robot'
 import _ from 'lodash'
+import { cp } from 'fs'
 
 enum CommandType {
-    PLACE, MOVE, LEFT, RIGHT, OBSTACLE
+    PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
 }
 
-type ObstaclePosition = {
+export type ObstaclePosition = {
     x: number
     y: number
 }
@@ -15,6 +16,7 @@ type Command = {
     x?: number
     y?: number
     f?: Facing
+    rotorOn?: boolean
 }
 
 export type RobotCoordinates = {
@@ -33,7 +35,7 @@ export class RobotSession {
      */
     constructor(boardSize: number = 5) {
         this.boardSize = boardSize
-        this.history = [Robot.place(0, 0, Facing.North)]
+        this.history = [Robot.place(0, 0, Facing.South)]
         this.obstacles = new Array<ObstaclePosition>()
     }
 
@@ -67,9 +69,17 @@ export class RobotSession {
                 // TODO: fix this
                 const { x, y, f } = this.serializePlaceCommand(cmd)
                 return { type: CommandType.PLACE, x, y, f }
+            case "rotor":
+                const rotorOn = this.serializeRotorCommand(cmd) === "start"
+                return { type: CommandType.ROTOR, rotorOn }
             case "obstacle":
                 const obstaclePosition = this.parseObstacleCommand(cmd)
                 return { type: CommandType.OBSTACLE, ...obstaclePosition }
+            case "up":
+                return { type: CommandType.UP }
+            case "down":
+                return { type: CommandType.DOWN }
+
             default:
                 throw new Error("unknown command");
         }
@@ -81,19 +91,25 @@ export class RobotSession {
                 if ([cmd.x, cmd.y, cmd.f].every(val => val !== null)) {
                     this.place(cmd.x!, cmd.y!, cmd.f!)
                 }
-
                 break;
             case CommandType.MOVE:
                 this.move()
-
                 break;
             case CommandType.LEFT:
                 this.left()
-
                 break;
             case CommandType.RIGHT:
                 this.right()
-
+                break;
+            case CommandType.UP:
+                this.up()
+                break;
+            case CommandType.DOWN:
+                this.down()
+                break;
+            case CommandType.ROTOR:
+                if (cmd.rotorOn) this.rotor("start");
+                if (!cmd.rotorOn) this.rotor("stop");
                 break;
 
             case CommandType.OBSTACLE:
@@ -134,6 +150,18 @@ export class RobotSession {
         this.history.push(nextRobot)
     }
 
+    private rotor = (state: string) => {
+        const { x, y, f } = this.current();
+        let nextRobot: Robot = Robot.place(x, y, f);
+        if (state === "start") {
+            nextRobot = this.history[this.history.length - 1].rotorStart();
+        } else if (state === "stop") {
+            nextRobot = this.history[this.history.length - 1].rotorStop();
+        }
+
+        this.history.push(nextRobot)
+    }
+
     private move = () => {
         const nextRobot = this.history[this.history.length - 1].move()
 
@@ -144,10 +172,28 @@ export class RobotSession {
         this.history.push(nextRobot)
     }
 
+    private up = () => {
+        const nextRobot = this.history[this.history.length - 1].up()
+        // @TODO: add error handling for when more than 4 units
+        this.history.push(nextRobot)
+    }
+
+    private down = () => {
+        const nextRobot = this.history[this.history.length - 1].down()
+        // @TODO: add error handling for when on the ground
+        this.history.push(nextRobot)
+    }
+
+
     private serializePlaceCommand = (command: string): RobotCoordinates => {
         const coordinates: Array<string> = command.split(" ").splice(1).map(coord => coord.replace(/[\W_]+/g, ""))
         const facing = Object.values(Facing).indexOf(_.capitalize(coordinates[2]));
         return { x: Number(coordinates[0]), y: Number(coordinates[1]), f: facing }
+    }
+
+    private serializeRotorCommand = (command: string): string => {
+        const rotorState = command.split(" ")[1];
+        return rotorState;
     }
 
     private parseObstacleCommand = (command: string): ObstaclePosition => {
@@ -159,7 +205,7 @@ export class RobotSession {
         }
     }
 
-    private isOnTheBoard = (num: number): boolean  => {
+    private isOnTheBoard = (num: number): boolean => {
         return num >= 0 && num <= (this.boardSize - 1);
     }
 }
