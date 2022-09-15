@@ -1,12 +1,13 @@
-import _, { size } from 'lodash';
+import _ from 'lodash';
 import { Icon } from '@iconify/react';
 
 import React, { useState } from 'react';
 import { InputDirections } from './components/InputDirections';
 import { Grid } from './components/Grid';
 import ErrorAlert from './components/ErrorAlert';
-import { RobotSession, RobotCoordinates } from './lib/robot/RobotSession';
-import { Facing, Robot } from './lib/robot/Robot';
+import { RobotSession } from './lib/robot/RobotSession';
+import { Facing } from './lib/robot/Robot';
+import RobotScene from './components/fiber/RobotScene';
 
 const BoardSize = 5
 
@@ -54,32 +55,38 @@ function App(): JSX.Element {
   }
 
   return (
-    <>
-      <div className="App">
-        {error && ErrorAlert(error.message)}
-        <h1 style={{ color: "#DD715B" }}>M<Icon icon="mdi:robot-happy" inline={true} style={{ color: "#C54D45" }} />ve me</h1>
-        <div className="GridRulesContainer">
-          <div className="GridInputButtonsContainer">
-            <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} obstacles={session.obstacles} />
+    // <>
+    //   <div className="App">
+    //     {error && ErrorAlert(error.message)}
+    //     <h1 style={{ color: "#DD715B" }}>M<Icon icon="mdi:robot-happy" inline={true} style={{ color: "#C54D45" }} />ve me</h1>
+    //     <div className="GridRulesContainer">
+    //       <div className="GridInputButtonsContainer">
+    //         <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} obstacles={session.obstacles} />
 
-            <input
-              value={command}
-              onChange={handleCommandInput}
-              placeholder="place 0 0 north"
-              className="input"
-            />
 
-            <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
-            <p><b>Obstacles:</b> {JSON.stringify(session.obstacles)}</p>
 
-            <button onClick={handleClick}>Execute!</button>
-            <button onClick={executeBack}>Back!</button>
-          </div>
-          <InputDirections />
-        </div>
-      </div>
-      <Icon icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.1em', bottom: '0.0001em', zIndex: '-1' }} />
-    </>
+    //         <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
+    //         <p><b>Obstacles:</b> {JSON.stringify(session.obstacles)}</p>
+
+
+    //       </div>
+    //       <InputDirections />
+    //     </div>
+    //   </div>
+    //   <Icon icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.1em', bottom: '0.0001em', zIndex: '-1' }} />
+    // </>
+    <div className="App">
+      <RobotScene robot={robot} />
+      <input
+        value={command}
+        onChange={handleCommandInput}
+        placeholder="place 0 0 north"
+        className="input"
+      />
+      <button onClick={handleClick}>Execute!</button>
+      <button onClick={executeBack}>Back!</button>
+      <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
+    </div>
   );
 }
 
