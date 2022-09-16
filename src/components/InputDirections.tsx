@@ -3,7 +3,7 @@ import React from 'react'
 
 export const InputDirections = () => {
     return (
-        <div className='commandContainer'>
+        <div className='commandContainer' style={{ color: "#231709" }}>
             <h3 style={{ textAlign: "left" }}>Available commands</h3>
             <h4 style={{ textAlign: "left" }}>CLASSIC 🥃</h4>
             <ul style={{ listStyle: "none", textAlign: "left" }}>

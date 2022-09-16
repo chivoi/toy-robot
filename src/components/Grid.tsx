@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Icon } from '@iconify/react'
 import React from 'react'
-import { Facing, Robot } from "../lib/robot/Robot"
+import { Facing } from "../lib/robot/Robot"
 import { ObstaclePosition } from "../lib/robot/RobotSession"
 
 type GridProps = {
@@ -38,15 +38,12 @@ export const Grid = (props: GridProps) => {
     const numObstaclesPresent = (obstacles: ObstaclePosition[], x: number, y: number): number => {
         const xOnTheBoard = x;
         const yOnTheBoard = boardSize - 1 - y;
-        // @TODO expand this to find number of occurences of an obstacle
-        // and it can not be more than 4
-        // obstacles.find(obst => obst.x === xOnTheBoard && obst.y === yOnTheBoard);
         return _.filter(obstacles, function (obst) { return obst.x === xOnTheBoard && obst.y === yOnTheBoard }).length
     }
 
-    const generateObstaclesPerCell = (i: number, j: number, obstacles: ObstaclePosition[]): string[] => {
+    const generateObstaclesPerCell = (i: number, j: number, obstacles: ObstaclePosition[]): JSX.Element[] => {
         const numObstacles = numObstaclesPresent(obstacles, i, j);
-        return new Array(numObstacles).fill("⛰️")
+        return new Array(numObstacles).fill(<Icon icon="fa6-solid:mountain" color="#231709" />)
     }
 
     return (
