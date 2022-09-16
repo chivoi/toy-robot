@@ -4,7 +4,7 @@
 
 A TypeScript/React solution to the toy robot challenge.
 
-<img width="488" alt="Screen Shot 2022-08-30 at 9 54 12 am" src="https://user-images.githubusercontent.com/10946872/187318920-4a2c2619-2078-4326-8fe7-c43afe3fd91b.png">
+![Screen Shot 2022-09-16 at 2 44 20 pm](https://user-images.githubusercontent.com/10946872/190558447-c1776b4a-1326-4253-a318-0667c16156dd.png)
 
 
 ## How to use
