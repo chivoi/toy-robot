@@ -58,21 +58,21 @@ describe("Robot", () => {
 
   describe("left", () => {
     it("rotates the robot counter-clockwise", () => {
-      const robot = Robot.place(0, 0, Facing.East);
+      let robot = Robot.place(0, 0, Facing.East);
 
-      robot.left();
+      robot = robot.left();
 
       expect(robot.f).toBe(Facing.North);
 
-      robot.left();
+      robot = robot.left();
 
       expect(robot.f).toBe(Facing.West);
 
-      robot.left();
+      robot = robot.left();
 
       expect(robot.f).toBe(Facing.South);
 
-      robot.left();
+      robot = robot.left();
 
       expect(robot.f).toBe(Facing.East);
     });
@@ -80,21 +80,21 @@ describe("Robot", () => {
 
   describe("right", () => {
     it("rotates the robot clockwise", () => {
-      const robot = Robot.place(0, 0, Facing.South);
+      let robot = Robot.place(0, 0, Facing.South);
 
-      robot.right();
+      robot = robot.right();
 
       expect(robot.f).toBe(Facing.West);
 
-      robot.right();
+      robot = robot.right();
 
       expect(robot.f).toBe(Facing.North);
 
-      robot.right();
+      robot = robot.right();
 
       expect(robot.f).toBe(Facing.East);
 
-      robot.right();
+      robot = robot.right();
 
       expect(robot.f).toBe(Facing.South);
     });
@@ -102,33 +102,33 @@ describe("Robot", () => {
 
   describe("move", () => {
     it("when the robot is facing west it moves west", () => {
-      const robot = Robot.place(3, 3, Facing.West);
+      let robot = Robot.place(3, 3, Facing.West);
 
-      robot.move();
+      robot = robot.move();
 
       expect(robot.position).toEqual({ x: 2, y: 3, z: 0 });
     });
 
     it("when the robot is facing south it moves south", () => {
-      const robot = Robot.place(3, 3, Facing.South);
+      let robot = Robot.place(3, 3, Facing.South);
 
-      robot.move();
+      robot = robot.move();
 
       expect(robot.position).toEqual({ x: 3, y: 2, z: 0 });
     });
 
     it("when the robot is facing north it moves north", () => {
-      const robot = Robot.place(3, 3, Facing.North);
+      let robot = Robot.place(3, 3, Facing.North);
 
-      robot.move();
+      robot = robot.move();
 
       expect(robot.position).toEqual({ x: 3, y: 4, z: 0 });
     });
 
     it("when the robot is facing east it moves east", () => {
-      const robot = Robot.place(3, 3, Facing.East);
+      let robot = Robot.place(3, 3, Facing.East);
 
-      robot.move();
+      robot = robot.move();
 
       expect(robot.position).toEqual({ x: 4, y: 3, z: 0 });
     });
