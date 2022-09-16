@@ -33,12 +33,14 @@ type RobotSceneProps = {
 }
 
 const RobotScene = (props: RobotSceneProps) => {
+    const { robot } = props
+
     return (
         <div style={{ width: "50vw", height: "80vh" }}>
             <Canvas camera={{ fov: 75, near: 0.1, far: 200, position: [4, 3, 4] }}>
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <Robot position={[-1.7, 0.3, 1.8]} />
+                <Robot position={[robot.x, robot.z, robot.y]} />
                 <Grid />
             </Canvas>
         </div>
