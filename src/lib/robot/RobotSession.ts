@@ -1,6 +1,5 @@
 import { Robot, Facing } from './Robot'
 import _ from 'lodash'
-import { cp } from 'fs'
 
 enum CommandType {
     PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
@@ -66,7 +65,6 @@ export class RobotSession {
             case "move":
                 return { type: CommandType.MOVE }
             case "place":
-                // TODO: fix this
                 const { x, y, f } = this.serializePlaceCommand(cmd)
                 return { type: CommandType.PLACE, x, y, f }
             case "rotor":
@@ -108,10 +106,12 @@ export class RobotSession {
                 this.down()
                 break;
             case CommandType.ROTOR:
-                if (cmd.rotorOn) this.rotor("start");
-                if (!cmd.rotorOn) this.rotor("stop");
+                if (cmd.rotorOn) {
+                    this.rotor("start");
+                } else {
+                    this.rotor("stop");
+                }
                 break;
-
             case CommandType.OBSTACLE:
                 if ([cmd.x, cmd.y].every(val => val !== null)) {
                     this.obstacles.push({ x: cmd.x!, y: cmd.y! })
@@ -157,6 +157,7 @@ export class RobotSession {
             nextRobot = this.history[this.history.length - 1].rotorStart();
         } else if (state === "stop") {
             nextRobot = this.history[this.history.length - 1].rotorStop();
+            nextRobot.position.z = 0
         }
 
         this.history.push(nextRobot)
