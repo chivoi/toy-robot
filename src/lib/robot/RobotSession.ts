@@ -1,7 +1,7 @@
 import { Robot, Facing } from './Robot'
 import _ from 'lodash'
 
-enum CommandType {
+export enum CommandType {
     PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
 }
 
@@ -24,23 +24,30 @@ export type RobotCoordinates = {
     f: Facing
 }
 
+export interface Validator {
+    validate: (command: string) => void
+}
+
 export class RobotSession {
     boardSize: number
     history: [Robot]
     obstacles: ObstaclePosition[]
+    validator: Validator
 
     /**
      *  A RobotSession represents a toy robot and a history of commands
      */
-    constructor(boardSize: number = 5) {
+    constructor(boardSize: number = 5, validator: Validator) {
         this.boardSize = boardSize
         this.history = [Robot.place(0, 0, Facing.South)]
         this.obstacles = new Array<ObstaclePosition>()
+        this.validator = validator
     }
 
     do = (something: string) => {
-        const command = this.parseCommand(something)
+        this.validator.validate(something)
 
+        const command = this.parseCommand(something)
         this.runCommand(command)
     }
 
