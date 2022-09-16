@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import React, { useRef } from 'react'
-import { Canvas, useFrame, ThreeElements, useLoader } from '@react-three/fiber'
+import { Canvas, ThreeElements } from '@react-three/fiber'
 import { Facing } from '../../lib/robot/Robot'
 
 const Robot = (props: ThreeElements['mesh']) => {
@@ -19,7 +19,7 @@ const Robot = (props: ThreeElements['mesh']) => {
 
 const Grid = () => (
     <mesh position={[0, 0, 0]}>
-        <gridHelper args={[4.5, 5]} />
+        <gridHelper args={[9, 5]} />
     </mesh>
 )
 
