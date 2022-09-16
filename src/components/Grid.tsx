@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Icon } from '@iconify/react'
-import React, { ReactComponentElement } from 'react'
-import { Facing, Robot } from "../lib/robot/Robot"
+import React from 'react'
+import { Facing } from "../lib/robot/Robot"
 import { ObstaclePosition } from "../lib/robot/RobotSession"
 
 type GridProps = {
