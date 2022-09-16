@@ -56,44 +56,46 @@ export class Robot {
   }
 
   left(): Robot {
+    let newFacing: number
     if (this.f === 0) {
-      this.f = Facing.__LENGTH - 1;
+      newFacing = Facing.__LENGTH - 1;
     } else {
-      this.f -= 1;
+      newFacing = this.f - 1;
     };
-    return new Robot(this.position, this.f, this.rotorOn);
+    return new Robot(this.position, newFacing, this.rotorOn);
   }
 
   right(): Robot {
+    let newFacing: number
     if (this.f === Facing.__LENGTH - 1) {
-      this.f = 0;
+      newFacing = 0;
     } else {
-      this.f += 1;
+      newFacing = this.f + 1;
     }
-    return new Robot(this.position, this.f, this.rotorOn);
+    return new Robot(this.position, newFacing, this.rotorOn);
   }
 
   move(): Robot {
-    const future = this.position
+    const newPosition = { x: this.position.x, y: this.position.y, z: this.position.z }
 
     switch (this.f) {
       case Facing.West:
-        future.x -= 1;
+        newPosition.x -= 1;
         break;
       case Facing.South:
-        future.y -= 1;
+        newPosition.y -= 1;
         break;
       case Facing.North:
-        future.y += 1;
+        newPosition.y += 1;
         break;
       case Facing.East:
-        future.x += 1;
+        newPosition.x += 1;
         break;
       default:
         break;
     }
 
-    return new Robot(future, this.f, this.rotorOn);
+    return new Robot(newPosition, this.f, this.rotorOn);
   }
 
   reportData() {
