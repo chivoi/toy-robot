@@ -31,7 +31,12 @@ describe("RobotSession", () => {
             describe("place with invalid placing", () => {
                 it("throws an error if the facing is invalid (unknown)", () => {
                     const session = new RobotSession(5, validator)
-                    expect(() => session.do("place 2 3 lfkgj")).toThrowError()
+                    expect(() => session.do("place lkjdghkjdfgh")).toThrowError()
+                })
+
+                it("throws an error if the facing is invalid (__length)", () => {
+                    const session = new RobotSession(5, validator)
+                    expect(() => session.do("place 2 3 __length")).toThrowError()
                 })
 
                 it("throws an error if the facing is invalid (number)", () => {
@@ -99,6 +104,20 @@ describe("RobotSession", () => {
                     rotorOn: false
                 }
             )
+        })
+
+        describe("invalid rotor commands", () => {
+            it("throws an error when wrong length", () => {
+                const session = new RobotSession(5, validator)
+
+                expect(() => session.do("rotor start NOW!")).toThrowError()
+            })
+
+            it("throws an error when unrecognised argument", () => {
+                const session = new RobotSession(5, validator)
+
+                expect(() => session.do("rotor stay")).toThrowError()
+            })
         })
     })
 

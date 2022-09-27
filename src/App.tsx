@@ -7,8 +7,10 @@ import { Grid } from './components/Grid';
 import ErrorAlert from './components/ErrorAlert';
 import { RobotSession, RobotCoordinates } from './lib/robot/RobotSession';
 import { Facing, Robot } from './lib/robot/Robot';
+import { RobotValidator } from './lib/robot/RobotValidator';
 
 const BoardSize = 5
+const validator = new RobotValidator(BoardSize)
 
 // TODOs
 // - Bug when going back, turn left/right doesn't seem to work
@@ -16,9 +18,10 @@ const BoardSize = 5
 // - Error messages
 
 function App(): JSX.Element {
+
   const [command, setCommand] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
-  const [session] = useState(new RobotSession(BoardSize))
+  const [session] = useState(new RobotSession(BoardSize, validator))
   const [robot, setRobot] = useState(session.current())
 
   const handleCommandInput = (event: React.ChangeEvent<HTMLInputElement>) => {

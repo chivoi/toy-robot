@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { toLower } from 'lodash'
 import { Validator, CommandType } from './RobotSession'
 import { Facing } from './Robot'
 
@@ -26,6 +26,17 @@ export class RobotValidator implements Validator {
 
     validArguments = (commandType: string, args: string[]) => {
         switch (commandType) {
+            case "move":
+            case "left":
+            case "right":
+            case "up":
+            case "down":
+                if (args.length > 0) {
+                    throw new Error(`${commandType} does not take arguments`)
+                }
+
+                break;
+
             case "place":
                 if (args.length !== 3) {
                     throw new Error(`place requires 3 arguments: x, y, facing`)
@@ -39,10 +50,7 @@ export class RobotValidator implements Validator {
                     throw new Error(`y must be a number between ${this.bound.toString()}`)
                 }
 
-                // TODO: figure out a better way
-                if (!Object.keys(Facing)
-                        .map(f => f.toLowerCase())
-                        .includes(args[2].toLowerCase())) {
+                if (!this.facingWords().includes(args[2].toLowerCase())) {
                     throw new Error(`${args[2]} is not a valid facing`)
                 }
 
@@ -66,13 +74,21 @@ export class RobotValidator implements Validator {
 
                 break;
             case "rotor":
+                const validRotorArgs = ["start", "stop"]
+
+                if (args.length !== 1 || !validRotorArgs.includes(args[0].toLowerCase())) {
+                    throw new Error(`rotor start or rotor stop, you typed ${commandType} ${args}`)
+                }
 
                 break;
-
             default:
                 break;
         }
     }
-}
 
-// placce 1 1 north
+    private facingWords() {
+        const entries = Object.entries(Facing)
+        const validEntries: [string, string | Facing][] = entries.slice(0, Facing.__LENGTH)
+        return validEntries.map(entry => entry[1] as string).map(toLower)
+    }
+}

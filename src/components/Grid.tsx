@@ -9,7 +9,7 @@ type GridProps = {
     x: number
     y: number
     f: Facing
-    obstacles: ObstaclePosition[]
+    obstacles: number[][]
 }
 
 export const Grid = (props: GridProps) => {
@@ -35,13 +35,11 @@ export const Grid = (props: GridProps) => {
         }
     }
 
-    const numObstaclesPresent = (obstacles: ObstaclePosition[], x: number, y: number): number => {
-        const xOnTheBoard = x;
-        const yOnTheBoard = boardSize - 1 - y;
-        return _.filter(obstacles, function (obst) { return obst.x === xOnTheBoard && obst.y === yOnTheBoard }).length
+    const numObstaclesPresent = (obstacles: number[][], x: number, y: number): number => {
+        return obstacles[x][y]
     }
 
-    const generateObstaclesPerCell = (i: number, j: number, obstacles: ObstaclePosition[]): JSX.Element[] => {
+    const generateObstaclesPerCell = (i: number, j: number, obstacles: number[][]): string[] => {
         const numObstacles = numObstaclesPresent(obstacles, i, j);
         return new Array(numObstacles).fill(<Icon icon="fa6-solid:mountain" color="#231709" />)
     }
