@@ -113,13 +113,16 @@ export class RobotSession {
                 }
                 break;
             case CommandType.OBSTACLE:
-                if ([cmd.x, cmd.y].every(val => val !== null)) {
-                    this.obstacles.push({ x: cmd.x!, y: cmd.y! })
-                    break;
+                if (!cmd.x || !cmd.y) {
+                    throw new Error("x and y can't be null");
                 }
-                // throw an error if they're null
+                if (!this.isOnTheBoard(cmd.x) || !this.isOnTheBoard(cmd.y)) {
+                    throw new Error("Can not place obstacle off the board!");
+                }
 
-                throw new Error("x and y can't be null");
+                this.obstacles.push({ x: cmd.x, y: cmd.y })
+                break;
+
             default:
                 throw new Error("unknown command")
         }
