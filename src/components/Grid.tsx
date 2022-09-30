@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { Icon } from '@iconify/react'
 import React from 'react'
-import { Facing } from "../lib/robot/Robot"
-import { ObstaclePosition } from "../lib/robot/RobotSession"
+import { Facing, Robot } from "../lib/robot/Robot"
+import { JsxElement } from 'typescript';
 
 type GridProps = {
     boardSize: number
@@ -10,10 +10,11 @@ type GridProps = {
     y: number
     f: Facing
     obstacles: number[][]
+    robot: any
 }
 
 export const Grid = (props: GridProps) => {
-    const { x, y, f, boardSize, obstacles } = props
+    const { x, y, f, boardSize, obstacles, robot } = props
 
     const generateGrid = () => {
         const grid = new Array(boardSize)
@@ -36,12 +37,18 @@ export const Grid = (props: GridProps) => {
     }
 
     const numObstaclesPresent = (obstacles: number[][], x: number, y: number): number => {
-        return obstacles[x][y]
+        const xOnTheBoard = x;
+        const yOnTheBoard = boardSize - 1 - y;
+        return obstacles[xOnTheBoard][yOnTheBoard]
     }
 
     const generateObstaclesPerCell = (i: number, j: number, obstacles: number[][]): string[] => {
         const numObstacles = numObstaclesPresent(obstacles, i, j);
         return new Array(numObstacles).fill(<Icon icon="fa6-solid:mountain" color="#231709" />)
+    }
+
+    const generateRobot = (rotorOn: boolean) => {
+        return rotorOn ? <Icon icon="gis:drone" inline={true} /> : <Icon icon="vscode-icons:file-type-robots" inline={true} />
     }
 
     return (
@@ -59,7 +66,7 @@ export const Grid = (props: GridProps) => {
                                             <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle() : {}}>
                                                 <>
                                                     {
-                                                        isRobotPresent ? <Icon icon="vscode-icons:file-type-robots" inline={true} /> : ""
+                                                        isRobotPresent ? generateRobot(robot.rotorOn) : ""
                                                     }
                                                     {generateObstaclesPerCell(i, j, obstacles)}
                                                 </>

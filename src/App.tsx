@@ -12,11 +12,6 @@ import { RobotValidator } from './lib/robot/RobotValidator';
 const BoardSize = 5
 const validator = new RobotValidator(BoardSize)
 
-// TODOs
-// - Bug when going back, turn left/right doesn't seem to work
-// - Bug: when use move before place, can not go back, says no earlier history
-// - Error messages
-
 function App(): JSX.Element {
 
   const [command, setCommand] = useState<string>('');
@@ -63,7 +58,7 @@ function App(): JSX.Element {
         <h1 style={{ color: "#DD715B" }}>M<Icon icon="mdi:robot-happy" inline={true} style={{ color: "#C54D45" }} />ve me</h1>
         <div className="GridRulesContainer">
           <div className="GridInputButtonsContainer">
-            <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} obstacles={session.obstacles} />
+            <Grid boardSize={BoardSize} x={robot.x} y={robot.y} f={robot.f} obstacles={session.obstacles} robot={session.current()} />
 
             <input
               value={command}
@@ -73,7 +68,6 @@ function App(): JSX.Element {
             />
 
             <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
-            <p><b>Obstacles:</b> {JSON.stringify(session.obstacles)}</p>
 
             <button onClick={handleClick}>Execute!</button>
             <button onClick={executeBack}>Back!</button>
@@ -87,14 +81,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-
-// TODOs:
-
-// robot is not on the grid on the initial render and appears there only after user places it
-
-// re-place or reset robot
-
-// errors: if not yet placed, can not right, left or move
-
-// front end
-

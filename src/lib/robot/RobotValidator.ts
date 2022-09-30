@@ -56,20 +56,20 @@ export class RobotValidator implements Validator {
 
                 break;
             case "obstacle":
-                if (args.length !== 3) {
-                    throw new Error(`obstacle requires 3 arguments: x, y, z`)
+                if (args.length < 2 || args.length > 3) {
+                    throw new Error(`obstacle requires at least 2 arguments: x, y`)
                 }
 
                 if (args[0] < '0' || args[0] > this.bound.toString()) {
-                    throw new Error(`x must be a number between ${this.bound.toString()}`)
+                    throw new Error(`x must be a number between 0 and ${(this.bound - 1).toString()}`)
                 }
 
                 if (args[1] < '0' || args[1] > this.bound.toString()) {
-                    throw new Error(`y must be a number between ${this.bound.toString()}`)
+                    throw new Error(`y must be a number between 0 and ${(this.bound - 1).toString()}`)
                 }
 
                 if (args[2] < '0' || args[2] > this.bound.toString()) {
-                    throw new Error(`z must be a number between ${this.bound.toString()}`)
+                    throw new Error(`z must be a number between 0 and ${(this.bound - 1).toString()}`)
                 }
 
                 break;

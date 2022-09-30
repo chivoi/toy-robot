@@ -125,9 +125,13 @@ export class RobotSession {
                     throw new Error("x and y can't be null");
                 }
 
+                if (this.obstacles[cmd.x][cmd.y] === 4) {
+                    throw new Error("Can not place more than 4 obstacles in one cell")
+                }
+
                 this.obstacles[cmd.x][cmd.y] = this.obstacles[cmd.x][cmd.y] + 1
                 break;
-                // throw an error if they're null
+            // throw an error if they're null
 
 
             default:
