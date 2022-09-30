@@ -1,7 +1,7 @@
 import { Robot, Facing } from './Robot'
 import _ from 'lodash'
 
-enum CommandType {
+export enum CommandType {
     PLACE, MOVE, LEFT, RIGHT, OBSTACLE, ROTOR, UP, DOWN
 }
 
@@ -24,23 +24,31 @@ export type RobotCoordinates = {
     f: Facing
 }
 
+export interface Validator {
+    validate: (command: string) => void
+}
+
 export class RobotSession {
     boardSize: number
     history: [Robot]
-    obstacles: ObstaclePosition[]
+    obstacles: number[][]
+    validator: Validator
 
     /**
      *  A RobotSession represents a toy robot and a history of commands
      */
-    constructor(boardSize: number = 5) {
+    constructor(boardSize: number = 5, validator: Validator) {
         this.boardSize = boardSize
         this.history = [Robot.place(0, 0, Facing.South)]
-        this.obstacles = new Array<ObstaclePosition>()
+        this.obstacles = new Array(boardSize).fill([]).map(ary => ary = new Array(boardSize).fill(0))
+
+        this.validator = validator
     }
 
     do = (something: string) => {
-        const command = this.parseCommand(something)
+        this.validator.validate(something)
 
+        const command = this.parseCommand(something)
         this.runCommand(command)
     }
 
@@ -113,13 +121,15 @@ export class RobotSession {
                 }
                 break;
             case CommandType.OBSTACLE:
-                if ([cmd.x, cmd.y].every(val => val !== null)) {
-                    this.obstacles.push({ x: cmd.x!, y: cmd.y! })
-                    break;
+                if (!cmd.x || !cmd.y) {
+                    throw new Error("x and y can't be null");
                 }
+
+                this.obstacles[cmd.x][cmd.y] = this.obstacles[cmd.x][cmd.y] + 1
+                break;
                 // throw an error if they're null
 
-                throw new Error("x and y can't be null");
+
             default:
                 throw new Error("unknown command")
         }
@@ -127,26 +137,16 @@ export class RobotSession {
 
     private place = (x: number, y: number, f: Facing) => {
         const nextRobot = Robot.place(x, y, f)
-
-        if (f >= Facing.__LENGTH) {
-            throw new Error("invalid facing");
-        }
-        if (!this.isOnTheBoard(x) || !this.isOnTheBoard(y)) {
-            throw new Error(`invalid ${!this.isOnTheBoard(x) ? "x" : "y"}`);
-        }
-
         this.history.push(nextRobot)
     }
 
     private left = () => {
         const nextRobot = this.history[this.history.length - 1].left()
-
         this.history.push(nextRobot)
     }
 
     private right = () => {
         const nextRobot = this.history[this.history.length - 1].right()
-
         this.history.push(nextRobot)
     }
 
@@ -175,13 +175,21 @@ export class RobotSession {
 
     private up = () => {
         const nextRobot = this.history[this.history.length - 1].up()
-        // @TODO: add error handling for when more than 4 units
+
+        if (!this.isOnTheBoard(nextRobot.position.z)) {
+            throw new Error("💀 Too high, out of control range 💀")
+        }
+
         this.history.push(nextRobot)
     }
 
     private down = () => {
         const nextRobot = this.history[this.history.length - 1].down()
-        // @TODO: add error handling for when on the ground
+
+        if (!this.isOnTheBoard(nextRobot.position.z)) {
+            throw new Error("💀 Cannot dig under ground 💀")
+        }
+
         this.history.push(nextRobot)
     }
 
