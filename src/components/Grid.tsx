@@ -47,8 +47,9 @@ export const Grid = (props: GridProps) => {
         return new Array(numObstacles).fill(<Icon icon="fa6-solid:mountain" color="#231709" />)
     }
 
-    const generateRobot = (rotorOn: boolean) => {
-        return rotorOn ? <Icon icon="gis:drone" inline={true} /> : <Icon icon="vscode-icons:file-type-robots" inline={true} />
+    const generateRobot = (rotorOn: boolean, z: number) => {
+        const size = (z + 10) * 3.5
+        return rotorOn ? <Icon icon="gis:drone" inline={true} fontSize={`${size}px`} /> : <Icon icon="vscode-icons:file-type-robots" inline={true} fontSize={`${size}px`} />
     }
 
     return (
@@ -66,7 +67,7 @@ export const Grid = (props: GridProps) => {
                                             <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle() : {}}>
                                                 <>
                                                     {
-                                                        isRobotPresent ? generateRobot(robot.rotorOn) : ""
+                                                        isRobotPresent ? generateRobot(robot.rotorOn, robot.z) : ""
                                                     }
                                                     {generateObstaclesPerCell(i, j, obstacles)}
                                                 </>
