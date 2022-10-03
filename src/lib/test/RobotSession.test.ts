@@ -125,14 +125,18 @@ describe("RobotSession", () => {
         it("creates them", () => {
             const session = new RobotSession(5, validator)
 
-            session.do("obstacle 1 1 1")
-            session.do("obstacle 0 0 0")
-            session.do("obstacle 2 2 2")
-            session.do("obstacle 3 3 3")
+            session.do("obstacle 1 1")
+            session.do("obstacle 0 0")
+            session.do("obstacle 2 2")
+            session.do("obstacle 3 3")
 
             expect(session.obstacles).toEqual(
                 [
-                    {"x": 1, "y": 1}, {"x": 0, "y": 0}, {"x": 2, "y": 2}, {"x": 3, "y": 3}
+                    [1, 0, 0, 0, 0],
+                    [0, 1, 0, 0, 0],
+                    [0, 0, 1, 0, 0],
+                    [0, 0, 0, 1, 0],
+                    [0, 0, 0, 0, 0]
                 ]
             )
         })
@@ -141,21 +145,20 @@ describe("RobotSession", () => {
             it("raises an error when not enough arguments", () => {
                 const session = new RobotSession(5, validator)
 
-                expect(() => session.do("obstacle 1 1")).toThrowError()
+                expect(() => session.do("obstacle 1")).toThrowError()
             })
 
             it("raises an error when out of bounds", () => {
                 const session = new RobotSession(5, validator)
 
-                expect(() => session.do("obstacle 6 6 1")).toThrowError()
+                expect(() => session.do("obstacle 6 6")).toThrowError()
             })
 
             it("raises an error when not a number", () => {
                 const session = new RobotSession(5, validator)
 
-                expect(() => session.do("obstacle b 1 1")).toThrowError()
-                expect(() => session.do("obstacle 1 b 1")).toThrowError()
-                expect(() => session.do("obstacle 1 1 b")).toThrowError()
+                expect(() => session.do("obstacle b 1")).toThrowError()
+                expect(() => session.do("obstacle 1 b")).toThrowError()
             })
         })
     })

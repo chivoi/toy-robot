@@ -16,23 +16,25 @@ export class Robot {
   position: Position3D;
   f: Facing;
   rotorOn: boolean;
+  damaged: boolean;
 
   static place(x: number, y: number, f: Facing) {
-    return new Robot({x, y, z: 0}, f, false)
+    return new Robot({ x, y, z: 0 }, f, false, false)
   }
 
-  constructor(position: Position3D, f: Facing, rotorOn: boolean) {
+  constructor(position: Position3D, f: Facing, rotorOn: boolean, damaged: boolean) {
     this.position = position
     this.f = f;
     this.rotorOn = rotorOn;
+    this.damaged = damaged;
   }
 
   rotorStart(): Robot {
-    return new Robot(this.position, this.f, true)
+    return new Robot(this.position, this.f, true, this.damaged)
   }
 
   rotorStop(): Robot {
-    return new Robot(this.position, this.f, false)
+    return new Robot(this.position, this.f, false, this.damaged)
   }
 
   up(): Robot {
@@ -42,7 +44,7 @@ export class Robot {
       z: this.position.z + 1
     }
 
-    return new Robot(newPosition, this.f, this.rotorOn)
+    return new Robot(newPosition, this.f, this.rotorOn, this.damaged)
   }
 
   down(): Robot {
@@ -52,7 +54,7 @@ export class Robot {
       z: this.position.z - 1
     }
 
-    return new Robot(newPosition, this.f, this.rotorOn)
+    return new Robot(newPosition, this.f, this.rotorOn, this.damaged)
   }
 
   left(): Robot {
@@ -62,7 +64,7 @@ export class Robot {
     } else {
       newFacing = this.f - 1;
     };
-    return new Robot(this.position, newFacing, this.rotorOn);
+    return new Robot(this.position, newFacing, this.rotorOn, this.damaged);
   }
 
   right(): Robot {
@@ -72,7 +74,7 @@ export class Robot {
     } else {
       newFacing = this.f + 1;
     }
-    return new Robot(this.position, newFacing, this.rotorOn);
+    return new Robot(this.position, newFacing, this.rotorOn, this.damaged);
   }
 
   move(): Robot {
@@ -95,20 +97,25 @@ export class Robot {
         break;
     }
 
-    return new Robot(newPosition, this.f, this.rotorOn);
+    return new Robot(newPosition, this.f, this.rotorOn, this.damaged);
+  }
+
+  crash(): Robot {
+    return new Robot(this.position, this.f, this.rotorOn, true);
   }
 
   reportData() {
     return {
       ...this.position,
       f: this.f,
-      rotorOn: this.rotorOn
+      rotorOn: this.rotorOn,
+      damaged: this.damaged
     }
   }
 
   reportString(): string {
     const facingDirections = Object.values(Facing)
-    const rotorString = this.rotorOn ? "On": "Off"
-    return `X: ${this.position.x}, Y: ${this.position.y}, Z: ${this.position.z}, FACING: ${facingDirections[this.f]}, ROTOR: ${rotorString}`;
+    const rotorString = this.rotorOn ? "On" : "Off"
+    return `X: ${this.position.x}, Y: ${this.position.y}, Z: ${this.position.z}, FACING: ${facingDirections[this.f]}, ROTOR: ${rotorString}, DAMAGED: ${this.damaged}`;
   }
 }

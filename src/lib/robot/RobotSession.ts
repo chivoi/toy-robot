@@ -46,6 +46,9 @@ export class RobotSession {
     }
 
     do = (something: string) => {
+        if (this.current().damaged) {
+            throw new Error("🤕 Robot crashed, can not execute commands 🤕")
+        }
         this.validator.validate(something)
 
         const command = this.parseCommand(something)
@@ -63,7 +66,7 @@ export class RobotSession {
     current = () => this.history[this.history.length - 1].reportData()
 
     private parseCommand = (cmd: string): Command => {
-        const tokens = cmd.split(" ")
+        const tokens = cmd.trim().split(" ")
 
         switch (tokens[0]) {
             case "left":
@@ -121,14 +124,24 @@ export class RobotSession {
                 }
                 break;
             case CommandType.OBSTACLE:
-                if (!cmd.x || !cmd.y) {
-                    throw new Error("x and y can't be null");
+                if (cmd.x === undefined || cmd.y === undefined) {
+                    throw new Error("x and y can't be undefined");
+                }
+
+                if (this.obstacles[cmd.x][cmd.y] === 4) {
+                    throw new Error("Can not place more than 4 obstacles in one cell")
+                }
+
+                const { x, y, f } = this.current();
+                const nextRobot: Robot = Robot.place(x, y, f);
+
+                if ((cmd.x === nextRobot.position.x)
+                    && (cmd.y === nextRobot.position.y)) {
+                    throw new Error("Can not place an obstacle: there is a robot in this cell")
                 }
 
                 this.obstacles[cmd.x][cmd.y] = this.obstacles[cmd.x][cmd.y] + 1
                 break;
-                // throw an error if they're null
-
 
             default:
                 throw new Error("unknown command")
@@ -137,6 +150,10 @@ export class RobotSession {
 
     private place = (x: number, y: number, f: Facing) => {
         const nextRobot = Robot.place(x, y, f)
+        if (this.obstacles[nextRobot.position.x][nextRobot.position.y]) {
+            throw new Error("Can not place: there is an obstacle in this cell")
+        }
+
         this.history.push(nextRobot)
     }
 
@@ -153,11 +170,16 @@ export class RobotSession {
     private rotor = (state: string) => {
         const { x, y, f } = this.current();
         let nextRobot: Robot = Robot.place(x, y, f);
+
         if (state === "start") {
             nextRobot = this.history[this.history.length - 1].rotorStart();
         } else if (state === "stop") {
             nextRobot = this.history[this.history.length - 1].rotorStop();
-            nextRobot.position.z = 0
+            if (this.obstacles[nextRobot.position.x][nextRobot.position.y]) {
+                nextRobot.damaged = true;
+            } else {
+                nextRobot.position.z = 0
+            }
         }
 
         this.history.push(nextRobot)
@@ -168,6 +190,15 @@ export class RobotSession {
 
         if (!this.isOnTheBoard(nextRobot.position.x) || !this.isOnTheBoard(nextRobot.position.y)) {
             throw new Error("💀 Can not move off the board 💀")
+        }
+
+        if (this.obstacles[nextRobot.position.x][nextRobot.position.y] && !nextRobot.rotorOn) {
+            throw new Error("Start the rotor to fly obstacles")
+        }
+
+        if (this.obstacles[nextRobot.position.x][nextRobot.position.y]
+            && (nextRobot.position.z < (this.obstacles[nextRobot.position.x][nextRobot.position.y]))) {
+            throw new Error("Go up to fly above this obstacle or go around")
         }
 
         this.history.push(nextRobot)
