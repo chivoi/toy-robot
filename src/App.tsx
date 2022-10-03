@@ -65,9 +65,11 @@ function App(): JSX.Element {
               onChange={handleCommandInput}
               placeholder="place 0 0 north"
               className="input"
+              style={{ marginTop: "0.5em" }}
             />
 
-            <p><b>Report:</b> {robot.x}, {robot.y}, {robot.z} {Facing[robot.f]}, rotor {robot.rotorOn ? "on" : "off"}</p>
+            <p><b>Report:</b> position {robot.x}, {robot.y}, {robot.z}
+              <br />facing {Facing[robot.f].toLowerCase()}, rotor {robot.rotorOn ? "on" : "off"}, status {robot.damaged ? "damaged" : "intact"}</p>
 
             <button onClick={handleClick}>Execute!</button>
             <button onClick={executeBack}>Back!</button>
@@ -75,7 +77,7 @@ function App(): JSX.Element {
           <InputDirections />
         </div>
       </div>
-      <Icon icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.1em', bottom: '0.0001em', zIndex: '-1' }} />
+      <Icon className='BigRobotIcon' icon="mdi:robot-happy" style={{ fontSize: '15em', color: 'white', opacity: '0.6', position: 'absolute', left: '0.1em', bottom: '0.0001em', zIndex: '-1' }} />
     </>
   );
 }

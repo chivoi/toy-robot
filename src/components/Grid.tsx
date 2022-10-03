@@ -44,12 +44,19 @@ export const Grid = (props: GridProps) => {
 
     const generateObstaclesPerCell = (i: number, j: number, obstacles: number[][]): string[] => {
         const numObstacles = numObstaclesPresent(obstacles, i, j);
-        return new Array(numObstacles).fill(<Icon icon="fa6-solid:mountain" color="#231709" />)
+        return new Array(numObstacles).fill(<Icon icon="akar-icons:square-fill" color="#231709" fontSize={"30px"} />)
     }
 
-    const generateRobot = (rotorOn: boolean, z: number) => {
+    const generateRobot = (rotorOn: boolean, damaged: boolean, z: number) => {
         const size = (z + 10) * 3.5
-        return rotorOn ? <Icon icon="gis:drone" inline={true} fontSize={`${size}px`} /> : <Icon icon="vscode-icons:file-type-robots" inline={true} fontSize={`${size}px`} />
+        let icon = <Icon icon="vscode-icons:file-type-robots" inline={true} fontSize={`${size}px`} />
+        if (rotorOn) {
+            icon = <Icon icon="gis:drone" inline={true} fontSize={`${size}px`} />
+        }
+        if (damaged) {
+            icon = <Icon icon="game-icons:spiky-explosion" inline={true} />
+        }
+        return icon;
     }
 
     return (
@@ -67,7 +74,7 @@ export const Grid = (props: GridProps) => {
                                             <span key={key} className='cell' style={isRobotPresent ? robotFacingStyle() : {}}>
                                                 <>
                                                     {
-                                                        isRobotPresent ? generateRobot(robot.rotorOn, robot.z) : ""
+                                                        isRobotPresent ? generateRobot(robot.rotorOn, robot.damaged, robot.z) : ""
                                                     }
                                                     {generateObstaclesPerCell(i, j, obstacles)}
                                                 </>
