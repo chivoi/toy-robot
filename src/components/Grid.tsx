@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import React from 'react'
 import { Facing, Robot } from "../lib/robot/Robot"
 import { JsxElement } from 'typescript';
+import { red } from '@mui/material/colors';
 
 type GridProps = {
     boardSize: number
@@ -29,7 +30,7 @@ export const Grid = (props: GridProps) => {
     }
 
     const robotFacingStyle = () => {
-        const rotationDegrees = 90 * f + 180
+        const rotationDegrees = 90 * f
 
         return {
             transform: `rotate(${rotationDegrees}deg)`
@@ -51,10 +52,10 @@ export const Grid = (props: GridProps) => {
         const size = (z + 10) * 3.5
         let icon = <Icon icon="vscode-icons:file-type-robots" inline={true} fontSize={`${size}px`} />
         if (rotorOn) {
-            icon = <Icon icon="gis:drone" inline={true} fontSize={`${size}px`} />
+            icon = <Icon icon="gis:drone" inline={true} fontSize={`${size}px`} color={"#C54D45"} />
         }
         if (damaged) {
-            icon = <Icon icon="game-icons:spiky-explosion" inline={true} />
+            icon = <Icon icon="game-icons:spiky-explosion" inline={true} color={"red"} />
         }
         return icon;
     }

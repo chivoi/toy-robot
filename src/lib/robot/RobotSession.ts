@@ -39,7 +39,7 @@ export class RobotSession {
      */
     constructor(boardSize: number = 5, validator: Validator) {
         this.boardSize = boardSize
-        this.history = [Robot.place(0, 0, Facing.South)]
+        this.history = [Robot.place(0, 0, Facing.North)]
         this.obstacles = new Array(boardSize).fill([]).map(ary => ary = new Array(boardSize).fill(0))
 
         this.validator = validator
